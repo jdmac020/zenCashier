@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace ZenCashier
 {
-    public class Class1
+    public interface ICashier
     {
+        bool AddSku(string sku, double price, bool isEaches);
     }
 }
