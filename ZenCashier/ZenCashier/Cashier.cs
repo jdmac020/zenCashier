@@ -8,9 +8,9 @@ namespace ZenCashier
 {
     public class Cashier : ICashier
     {
-        public bool AddSku(string sku, double price, bool isEaches)
+        public bool AddSku(string id, double price, bool isEaches)
         {
-            if (string.IsNullOrEmpty(sku))
+            if (string.IsNullOrEmpty(id))
                 return false;
 
             if (price < 0)
