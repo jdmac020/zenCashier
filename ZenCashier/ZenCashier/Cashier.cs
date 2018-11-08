@@ -10,6 +10,9 @@ namespace ZenCashier
     {
         public bool AddSku(string sku, double price, bool isEaches)
         {
+            if (string.IsNullOrEmpty(sku))
+                return false;
+
             return true;
         }
     }
