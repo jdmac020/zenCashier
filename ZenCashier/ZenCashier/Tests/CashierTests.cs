@@ -155,6 +155,16 @@ namespace ZenCashier.Tests
             result.ShouldBe(false);
         }
 
+        [Fact]
+        public void AddSpecialPercentOff_NegativeLimit_ReturnsFalse()
+        {
+            var testClass = CreateCashier();
+
+            var result = testClass.AddSpecialSetPrice("lemon pledge", 2, 5, -2);
+
+            result.ShouldBe(false);
+        }
+
         #endregion
 
         #region AddSpecialSetPrice
@@ -215,6 +225,16 @@ namespace ZenCashier.Tests
             var testClass = CreateCashier();
 
             var result = testClass.AddSpecialSetPrice("ivory", 2, -5);
+
+            result.ShouldBe(false);
+        }
+
+        [Fact]
+        public void AddSpecialSetPrice_NegativeLimit_ReturnsFalse()
+        {
+            var testClass = CreateCashier();
+
+            var result = testClass.AddSpecialSetPrice("lemon pledge", 2, 5, -2);
 
             result.ShouldBe(false);
         }
