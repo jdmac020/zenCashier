@@ -5,25 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using Shouldly;
+using static ZenCashier.Tests.TestValues;
 
 namespace ZenCashier.Tests
 {
     public class SkuManagerTests
     {
-        protected const string SKU_ONE = "tater tots";
-        protected const string SKU_TWO = "ketchup";
-        protected const string SKU_THREE = "palmolive";
-
-        protected const double PRICE_ONE = .79;
-        protected const double PRICE_TWO = 3;
-        protected const double PRICE_NEGATIVE = -.89;
-
-
-        protected const double SPECIAL_BOGO_FREE = 100;
-        protected const double SPECIAL_BOGO_HALF = 50;
-        protected const double SPECIAL_X_FOR_THREE = 3;
-        protected const double SPECIAL_X_FOR_NEGATIVE = 3;
-
+        
         protected ISkuManager CreateSkuManager()
         {
             return new SkuManager();

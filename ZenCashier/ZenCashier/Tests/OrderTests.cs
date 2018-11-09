@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Xunit;
 using Shouldly;
 using ZenCashier.Domain.Order;
+using static ZenCashier.Tests.TestValues;
+using ZenCashier.Exceptions;
 
 namespace ZenCashier.Tests
 {
@@ -16,9 +18,9 @@ namespace ZenCashier.Tests
         {
             IOrder testClass = new Order();
 
-            testClass.ScanItem("tater tots");
+            testClass.ScanItem(SKU_ONE);
 
-            testClass.SubTotal.ShouldBe(.79);
+            testClass.SubTotal.ShouldBe(PRICE_ONE);
         }
 
         [Fact]
@@ -29,6 +31,44 @@ namespace ZenCashier.Tests
             testClass.ScanItem(string.Empty);
 
             testClass.SubTotal.ShouldBe(0);
+        }
+
+        [Fact]
+        public void ScanItem_ValidSkuAndWeight_SubtotalEqualsPriceTimesWeight()
+        {
+            IOrder testClass = new Order();
+
+            testClass.ScanItem(SKU_ONE, WEIGHT_ONE);
+
+            testClass.SubTotal.ShouldBe(1.78);
+        }
+
+        [Fact]
+        public void ScanItem_InvalidSkuValidWeight_SubtotalEqualsZero()
+        {
+            IOrder testClass = new Order();
+
+            testClass.ScanItem(string.Empty, WEIGHT_TWO);
+
+            testClass.SubTotal.ShouldBe(0);
+        }
+
+        [Fact]
+        public void ScanItem_ValidSkuZeroWeight_SubtotalEqualsZero()
+        {
+            IOrder testClass = new Order();
+
+            testClass.ScanItem(SKU_TWO, WEIGHT_ZERO);
+
+            testClass.SubTotal.ShouldBe(0);
+        }
+
+        [Fact]
+        public void ScanItem_ValidSkuNegativeWeight_ShouldThrowException()
+        {
+            IOrder testClass = new Order();
+
+            Should.Throw<InvalidWeightException>(() => testClass.ScanItem(SKU_THREE, WEIGHT_NEGATIVE));
         }
     }
 }
