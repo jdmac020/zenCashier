@@ -12,8 +12,6 @@ namespace ZenCashier
 
         bool AddMarkdown(string sku, double amount);
 
-        bool AddSpecialPercentOff(string sku, int quantitytoTrigger, int percentOff, int limit = 0);
-
-        bool AddSpecialSetPrice(string sku, int quantityToTrigger, double specialPrice, int limit = 0);
+        bool AddSpecial(string sku, int quantityToTrigger, double amount, bool isPercentOff, int limit = 0);
     }
 }

@@ -93,128 +93,54 @@ namespace ZenCashier.Tests
 
         #endregion
 
-        #region AddSpecialPercentOff
+        #region AddSpecial
 
         [Fact]
-        public void AddSpecialPercentOff_ValidSpecialNoLimit_ReturnsTrue()
+        public void AddSpecial_ValidSpecialNoLimit_ReturnsTrue()
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecialPercentOff("french fries", 10, 50);
+            var result = testClass.AddSpecial("french bread", 2, 1.75, false);
 
             result.ShouldBe(true);
         }
 
         [Fact]
-        public void AddSpecialPercentOff_ValidSpecialLimit_ReturnsTrue()
+        public void AddSpecial_ValidSpecialLimit_ReturnsTrue()
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecialPercentOff("taco shells", 4, 100, 10);
+            var result = testClass.AddSpecial("taco shells", 4, 50, true, 10);
 
             result.ShouldBe(true);
         }
 
         [Fact]
-        public void AddSpecialPercentOff_MissingSku_ReturnsFalse()
+        public void AddSpecial_MissingSku_ReturnsFalse()
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecialPercentOff(string.Empty, 4, 100);
+            var result = testClass.AddSpecial(string.Empty, 4, 100, true);
 
             result.ShouldBe(false);
         }
 
         [Fact]
-        public void AddSpecialPercentOff_NoTriggerQuantity_ReturnsFalse()
+        public void AddSpecial_NoTriggerQuantity_ReturnsFalse()
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecialPercentOff("carrots", 0, 100, 10);
+            var result = testClass.AddSpecial("palmolive", 0, 100, true, 10);
 
             result.ShouldBe(false);
         }
 
         [Fact]
-        public void AddSpecialPercentOff_NoAmountOff_ReturnsFalse()
+        public void AddSpecial_NoPrice_ReturnsFalse()
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecialPercentOff("cabbage", 2, 0);
-
-            result.ShouldBe(false);
-        }
-
-        [Fact]
-        public void AddSpecialPercentOff_NegAmountOff_ReturnsFalse()
-        {
-            var testClass = CreateSkuManager();
-
-            var result = testClass.AddSpecialPercentOff("cabbage", 2, -15);
-
-            result.ShouldBe(false);
-        }
-
-        [Fact]
-        public void AddSpecialPercentOff_NegativeLimit_ReturnsFalse()
-        {
-            var testClass = CreateSkuManager();
-
-            var result = testClass.AddSpecialSetPrice("lemon pledge", 2, 5, -2);
-
-            result.ShouldBe(false);
-        }
-
-        #endregion
-
-        #region AddSpecialSetPrice
-
-        [Fact]
-        public void AddSpecialSetPrice_ValidSpecialNoLimit_ReturnsTrue()
-        {
-            var testClass = CreateSkuManager();
-
-            var result = testClass.AddSpecialSetPrice("french bread", 2, 1.75);
-
-            result.ShouldBe(true);
-        }
-
-        [Fact]
-        public void AddSpecialSetPrice_ValidSpecialLimit_ReturnsTrue()
-        {
-            var testClass = CreateSkuManager();
-
-            var result = testClass.AddSpecialSetPrice("taco shells", 4, .25, 10);
-
-            result.ShouldBe(true);
-        }
-
-        [Fact]
-        public void AddSpecialSetPrice_MissingSku_ReturnsFalse()
-        {
-            var testClass = CreateSkuManager();
-
-            var result = testClass.AddSpecialSetPrice(string.Empty, 4, 100);
-
-            result.ShouldBe(false);
-        }
-
-        [Fact]
-        public void AddSpecialSetPrice_NoTriggerQuantity_ReturnsFalse()
-        {
-            var testClass = CreateSkuManager();
-
-            var result = testClass.AddSpecialSetPrice("palmolive", 0, 100, 10);
-
-            result.ShouldBe(false);
-        }
-
-        [Fact]
-        public void AddSpecialSetPrice_NoPrice_ReturnsFalse()
-        {
-            var testClass = CreateSkuManager();
-
-            var result = testClass.AddSpecialSetPrice("lifebouy", 2, 0);
+            var result = testClass.AddSpecial("lifebouy", 2, 0, false);
 
             result.ShouldBe(false);
         }
@@ -224,17 +150,17 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecialSetPrice("ivory", 2, -5);
+            var result = testClass.AddSpecial("ivory", 2, -5, false);
 
             result.ShouldBe(false);
         }
 
         [Fact]
-        public void AddSpecialSetPrice_NegativeLimit_ReturnsFalse()
+        public void AddSpecial_NegativeLimit_ReturnsFalse()
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecialSetPrice("lemon pledge", 2, 5, -2);
+            var result = testClass.AddSpecial("lemon pledge", 2, 5, false, -2);
 
             result.ShouldBe(false);
         }

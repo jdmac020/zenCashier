@@ -18,14 +18,9 @@ namespace ZenCashier
             return IsValidSkuAndAmount(id, price);
         }
 
-        public bool AddSpecialPercentOff(string sku, int quantitytoTrigger, int percentOff, int limit = 0)
+        public bool AddSpecial(string sku, int quantityToTrigger, double amount, bool isPercent, int limit = 0)
         {
-            return IsValidSpecial(sku, quantitytoTrigger, percentOff, limit);
-        }
-
-        public bool AddSpecialSetPrice(string sku, int quantityToTrigger, double specialPrice, int limit = 0)
-        {
-            return IsValidSpecial(sku, quantityToTrigger, specialPrice, limit);
+            return IsValidSpecial(sku, quantityToTrigger, amount, limit);
         }
 
         protected bool IsValidSkuAndAmount(string skuId, double amount)
