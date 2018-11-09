@@ -13,6 +13,9 @@ namespace ZenCashier.Tests
 {
     public class OrderTests
     {
+
+        #region Sku-only
+
         [Fact]
         public void ScanItem_ValidSkuOnly_SubtotalEqualsPrice()
         {
@@ -32,6 +35,12 @@ namespace ZenCashier.Tests
 
             testClass.SubTotal.ShouldBe(0);
         }
+
+        #endregion
+
+        #region With Weight
+
+        
 
         [Fact]
         public void ScanItem_ValidSkuAndWeight_SubtotalEqualsPriceTimesWeight()
@@ -70,5 +79,7 @@ namespace ZenCashier.Tests
 
             Should.Throw<InvalidWeightException>(() => testClass.ScanItem(SKU_THREE, WEIGHT_NEGATIVE));
         }
+
+        #endregion
     }
 }
