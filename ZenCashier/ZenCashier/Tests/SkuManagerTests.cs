@@ -10,6 +10,20 @@ namespace ZenCashier.Tests
 {
     public class SkuManagerTests
     {
+        protected const string SKU_ONE = "tater tots";
+        protected const string SKU_TWO = "ketchup";
+        protected const string SKU_THREE = "palmolive";
+
+        protected const double PRICE_ONE = .79;
+        protected const double PRICE_TWO = 3;
+        protected const double PRICE_NEGATIVE = -.89;
+
+
+        protected const double SPECIAL_BOGO_FREE = 100;
+        protected const double SPECIAL_BOGO_HALF = 50;
+        protected const double SPECIAL_X_FOR_THREE = 3;
+        protected const double SPECIAL_X_FOR_NEGATIVE = 3;
+
         protected ISkuManager CreateSkuManager()
         {
             return new SkuManager();
@@ -22,7 +36,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSku("Tater Tots", .79);
+            var result = testClass.AddSku(SKU_ONE, PRICE_ONE);
 
             result.ShouldBe(true);
         }
@@ -32,7 +46,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSku("Ketchup", 1.89);
+            var result = testClass.AddSku(SKU_TWO, PRICE_TWO);
 
             result.ShouldBe(true);
         }
@@ -42,7 +56,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSku(string.Empty, 1.75);
+            var result = testClass.AddSku(string.Empty, PRICE_ONE);
 
             result.ShouldBe(false);
         }
@@ -52,7 +66,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSku("Tartar Sauce", -1.95);
+            var result = testClass.AddSku(SKU_THREE, PRICE_NEGATIVE);
 
             result.ShouldBe(false);
         }
@@ -66,7 +80,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddMarkdown("tater tots", .25);
+            var result = testClass.AddMarkdown(SKU_ONE, PRICE_ONE);
 
             result.ShouldBe(true);
         }
@@ -76,7 +90,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddMarkdown(string.Empty, .65);
+            var result = testClass.AddMarkdown(string.Empty, PRICE_ONE);
 
             result.ShouldBe(false);
         }
@@ -86,7 +100,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddMarkdown("calamari", -.85);
+            var result = testClass.AddMarkdown(SKU_TWO, PRICE_NEGATIVE);
 
             result.ShouldBe(false);
         }
@@ -100,7 +114,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecial("french bread", 2, 1.75, false);
+            var result = testClass.AddSpecial(SKU_THREE, 2, SPECIAL_X_FOR_THREE, false);
 
             result.ShouldBe(true);
         }
@@ -110,7 +124,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecial("taco shells", 4, 50, true, 10);
+            var result = testClass.AddSpecial(SKU_THREE, 4, SPECIAL_BOGO_FREE, true, 10);
 
             result.ShouldBe(true);
         }
@@ -120,7 +134,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecial(string.Empty, 4, 100, true);
+            var result = testClass.AddSpecial(string.Empty, 4, SPECIAL_BOGO_HALF, true);
 
             result.ShouldBe(false);
         }
@@ -130,7 +144,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecial("palmolive", 0, 100, true, 10);
+            var result = testClass.AddSpecial(SKU_THREE, 0, SPECIAL_BOGO_FREE, true, 10);
 
             result.ShouldBe(false);
         }
@@ -140,7 +154,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecial("lifebouy", 2, 0, false);
+            var result = testClass.AddSpecial(SKU_TWO, 2, 0, false);
 
             result.ShouldBe(false);
         }
@@ -150,7 +164,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecial("ivory", 2, -5, false);
+            var result = testClass.AddSpecial(SKU_ONE, 2, SPECIAL_X_FOR_NEGATIVE, false);
 
             result.ShouldBe(false);
         }
@@ -160,7 +174,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecial("lemon pledge", 2, 5, false, -2);
+            var result = testClass.AddSpecial(SKU_THREE, 2, SPECIAL_X_FOR_THREE, false, -2);
 
             result.ShouldBe(false);
         }
@@ -169,6 +183,25 @@ namespace ZenCashier.Tests
 
         #region GetPrice
         
+        [Fact]
+        public void GetPrice_ValidSkuId_ReturnsPriceOne()
+        {
+            var testClass = CreateSkuManager();
+
+            var result = testClass.GetPrice(SKU_ONE);
+
+            result.ShouldBe(-.01);
+        }
+
+        [Fact]
+        public void GetPrice_InvalidSku_ReturnsNegativePenny()
+        {
+            var testClass = CreateSkuManager();
+
+            var result = testClass.GetPrice(string.Empty);
+
+            result.ShouldBe(-.01);
+        }
 
         #endregion
     }
