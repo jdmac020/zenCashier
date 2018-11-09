@@ -146,5 +146,69 @@ namespace ZenCashier.Tests
         }
 
         #endregion
+
+        #region AddSpecialSetPrice
+
+        [Fact]
+        public void AddSpecialSetPrice_ValidSpecialNoLimit_ReturnsTrue()
+        {
+            var testClass = CreateCashier();
+
+            var result = testClass.AddSpecialSetPrice("french bread", 2, 1.75);
+
+            result.ShouldBe(true);
+        }
+
+        [Fact]
+        public void AddSpecialSetPrice_ValidSpecialLimit_ReturnsTrue()
+        {
+            var testClass = CreateCashier();
+
+            var result = testClass.AddSpecialSetPrice("taco shells", 4, .25, 10);
+
+            result.ShouldBe(true);
+        }
+
+        [Fact]
+        public void AddSpecialSetPrice_MissingSku_ReturnsFalse()
+        {
+            var testClass = CreateCashier();
+
+            var result = testClass.AddSpecialSetPrice(string.Empty, 4, 100);
+
+            result.ShouldBe(false);
+        }
+
+        [Fact]
+        public void AddSpecialSetPrice_NoTriggerQuantity_ReturnsFalse()
+        {
+            var testClass = CreateCashier();
+
+            var result = testClass.AddSpecialSetPrice("palmolive", 0, 100, 10);
+
+            result.ShouldBe(false);
+        }
+
+        [Fact]
+        public void AddSpecialSetPrice_NoPrice_ReturnsFalse()
+        {
+            var testClass = CreateCashier();
+
+            var result = testClass.AddSpecialPercentOff("lifebouy", 2, 0);
+
+            result.ShouldBe(false);
+        }
+
+        [Fact]
+        public void AddSpecialSetPrice_NegativePrice_ReturnsFalse()
+        {
+            var testClass = CreateCashier();
+
+            var result = testClass.AddSpecialPercentOff("ivory", 2, -5);
+
+            result.ShouldBe(false);
+        }
+
+        #endregion
     }
 }
