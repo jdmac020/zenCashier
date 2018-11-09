@@ -41,6 +41,9 @@ namespace ZenCashier
             if (percentOff <= 0)
                 return false;
 
+            if (limit < 0)
+                return false;
+
             return true;
         }
 
@@ -53,6 +56,9 @@ namespace ZenCashier
                 return false;
 
             if (specialPrice <= 0)
+                return false;
+
+            if (limit < 0)
                 return false;
 
             return true;
