@@ -29,5 +29,15 @@ namespace ZenCashier
 
             return true;
         }
+
+        public bool AddSpecialPercentOff(string sku, int quantitytoTrigger, int percentOff, int limit = 0)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool AddSpecialSetPrice(string sku, int quantityToTrigger, double specialPrice, int limit = 0)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

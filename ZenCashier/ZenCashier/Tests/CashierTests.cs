@@ -92,5 +92,49 @@ namespace ZenCashier.Tests
         }
 
         #endregion
+
+        #region AddSpecialPercentOff
+
+        [Fact]
+        public void AddSpecialPercentOff_ValidSpecialNoLimit_ReturnsTrue()
+        {
+            var testClass = CreateCashier();
+
+            var result = testClass.AddSpecialPercentOff("french fries", 10, 50);
+
+            result.ShouldBe(true);
+        }
+
+        [Fact]
+        public void AddSpecialPercentOff_ValidSpecialLimit_ReturnsTrue()
+        {
+            var testClass = CreateCashier();
+
+            var result = testClass.AddSpecialPercentOff("taco shells", 4, 100, 10);
+
+            result.ShouldBe(true);
+        }
+
+        [Fact]
+        public void AddSpecialPercentOff_MissingSku_ReturnsFalse()
+        {
+            var testClass = CreateCashier();
+
+            var result = testClass.AddSpecialPercentOff(string.Empty, 4, 100, 10);
+
+            result.ShouldBe(false);
+        }
+
+        [Fact]
+        public void AddSpecialPercentOff_NoTriggerQuantity_ReturnsFalse()
+        {
+            var testClass = CreateCashier();
+
+            var result = testClass.AddSpecialPercentOff("carrots", 0, 100, 10);
+
+            result.ShouldBe(false);
+        }
+
+        #endregion
     }
 }
