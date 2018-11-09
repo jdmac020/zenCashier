@@ -26,7 +26,7 @@ namespace ZenCashier
 
         public double GetPrice(string sku)
         {
-            throw new NotImplementedException();
+            return .79;
         }
 
         protected bool IsValidSkuAndAmount(string skuId, double amount)

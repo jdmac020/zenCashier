@@ -190,7 +190,7 @@ namespace ZenCashier.Tests
 
             var result = testClass.GetPrice(SKU_ONE);
 
-            result.ShouldBe(-.01);
+            result.ShouldBe(PRICE_ONE);
         }
 
         [Fact]
