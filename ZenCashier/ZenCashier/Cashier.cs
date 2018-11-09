@@ -10,6 +10,9 @@ namespace ZenCashier
     {
         public bool AddMarkdown(string sku, double amount)
         {
+            if (string.IsNullOrEmpty(sku))
+                return false;
+
             return true;
         }
 
