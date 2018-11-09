@@ -60,9 +60,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Domain\Order\IOrder.cs" />
+    <Compile Include="Domain\Order\Order.cs" />
     <Compile Include="Domain\Skus\SkuManager.cs" />
     <Compile Include="Domain\Skus\ISkuManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tests\OrderTests.cs" />
     <Compile Include="Tests\SkuManagerTests.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -71,9 +74,7 @@
   <ItemGroup>
     <Analyzer Include="..\packages\xunit.analyzers.0.10.0\analyzers\dotnet\cs\xunit.analyzers.dll" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Domain\Order\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
