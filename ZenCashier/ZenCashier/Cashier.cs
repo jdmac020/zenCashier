@@ -10,24 +10,12 @@ namespace ZenCashier
     {
         public bool AddMarkdown(string sku, double amount)
         {
-            if (string.IsNullOrEmpty(sku))
-                return false;
-
-            if (amount < 0)
-                return false;
-
-            return true;
+            return IsValidSkuAndAmount(sku, amount);
         }
 
         public bool AddSku(string id, double price, bool isEaches)
         {
-            if (string.IsNullOrEmpty(id))
-                return false;
-
-            if (price < 0)
-                return false;
-
-            return true;
+            return IsValidSkuAndAmount(id, price);
         }
 
         public bool AddSpecialPercentOff(string sku, int quantitytoTrigger, int percentOff, int limit = 0)
@@ -38,6 +26,17 @@ namespace ZenCashier
         public bool AddSpecialSetPrice(string sku, int quantityToTrigger, double specialPrice, int limit = 0)
         {
             return IsValidSpecial(sku, quantityToTrigger, specialPrice, limit);
+        }
+
+        protected bool IsValidSkuAndAmount(string skuId, double amount)
+        {
+            if (string.IsNullOrEmpty(skuId))
+                return false;
+
+            if (amount < 0)
+                return false;
+
+            return true;
         }
 
         protected bool IsValidSpecial(string sku, int quantityToTrigger, double specialPrice, int limit)
