@@ -52,6 +52,9 @@ namespace ZenCashier
             if (quantityToTrigger <= 0)
                 return false;
 
+            if (specialPrice <= 0)
+                return false;
+
             return true;
         }
     }
