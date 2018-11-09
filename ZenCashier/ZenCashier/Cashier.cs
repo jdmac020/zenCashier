@@ -10,7 +10,7 @@ namespace ZenCashier
     {
         public bool AddMarkdown(string sku, double amount)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool AddSku(string id, double price, bool isEaches)
