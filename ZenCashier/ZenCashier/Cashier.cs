@@ -32,7 +32,7 @@ namespace ZenCashier
 
         public bool AddSpecialPercentOff(string sku, int quantitytoTrigger, int percentOff, int limit = 0)
         {
-            throw new NotImplementedException();
+            return true;
         }
 
         public bool AddSpecialSetPrice(string sku, int quantityToTrigger, double specialPrice, int limit = 0)
