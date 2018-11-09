@@ -32,6 +32,9 @@ namespace ZenCashier
 
         public bool AddSpecialPercentOff(string sku, int quantitytoTrigger, int percentOff, int limit = 0)
         {
+            if (string.IsNullOrEmpty(sku))
+                return false;
+
             return true;
         }
 
