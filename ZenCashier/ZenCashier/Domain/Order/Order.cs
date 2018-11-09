@@ -14,6 +14,9 @@ namespace ZenCashier.Domain.Order
 
         public void ScanItem(string sku)
         {
+            if (string.IsNullOrEmpty(sku))
+                return;
+
             _subTotal += .79;
         }
 
