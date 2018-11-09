@@ -38,6 +38,9 @@ namespace ZenCashier
             if (quantitytoTrigger.Equals(0))
                 return false;
 
+            if (percentOff <= 0)
+                return false;
+
             return true;
         }
 
