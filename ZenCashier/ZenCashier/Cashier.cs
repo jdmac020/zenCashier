@@ -8,6 +8,11 @@ namespace ZenCashier
 {
     public class Cashier : ICashier
     {
+        public bool AddMarkdown(string sku, double amount)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool AddSku(string id, double price, bool isEaches)
         {
             if (string.IsNullOrEmpty(id))

@@ -8,6 +8,8 @@ namespace ZenCashier
 {
     public interface ICashier
     {
-        bool AddSku(string sku, double price, bool isEaches);
+        bool AddSku(string id, double price, bool isEaches);
+
+        bool AddMarkdown(string sku, double amount);
     }
 }
