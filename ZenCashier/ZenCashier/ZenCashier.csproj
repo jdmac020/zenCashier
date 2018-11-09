@@ -60,10 +60,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cashier.cs" />
-    <Compile Include="ICashier.cs" />
+    <Compile Include="SkuManager.cs" />
+    <Compile Include="ISkuManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tests\CashierTests.cs" />
+    <Compile Include="Tests\SkuManagerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

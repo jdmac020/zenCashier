@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ZenCashier
 {
-    public interface ICashier
+    public interface ISkuManager
     {
         bool AddSku(string id, double price, bool isEaches);
 

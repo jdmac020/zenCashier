@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ZenCashier
 {
-    public class Cashier : ICashier
+    public class SkuManager : ISkuManager
     {
         public bool AddMarkdown(string sku, double amount)
         {
