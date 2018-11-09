@@ -22,7 +22,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSku("Tater Tots", .79, false);
+            var result = testClass.AddSku("Tater Tots", .79);
 
             result.ShouldBe(true);
         }
@@ -32,7 +32,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSku("Ketchup", 1.89, true);
+            var result = testClass.AddSku("Ketchup", 1.89);
 
             result.ShouldBe(true);
         }
@@ -42,7 +42,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSku(string.Empty, 1.75, true);
+            var result = testClass.AddSku(string.Empty, 1.75);
 
             result.ShouldBe(false);
         }
@@ -52,7 +52,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSku("Tartar Sauce", -1.95, false);
+            var result = testClass.AddSku("Tartar Sauce", -1.95);
 
             result.ShouldBe(false);
         }
@@ -164,6 +164,11 @@ namespace ZenCashier.Tests
 
             result.ShouldBe(false);
         }
+
+        #endregion
+
+        #region GetPrice
+        
 
         #endregion
     }
