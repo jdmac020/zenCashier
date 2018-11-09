@@ -32,22 +32,15 @@ namespace ZenCashier
 
         public bool AddSpecialPercentOff(string sku, int quantitytoTrigger, int percentOff, int limit = 0)
         {
-            if (string.IsNullOrEmpty(sku))
-                return false;
-
-            if (quantitytoTrigger.Equals(0))
-                return false;
-
-            if (percentOff <= 0)
-                return false;
-
-            if (limit < 0)
-                return false;
-
-            return true;
+            return IsValidSpecial(sku, quantitytoTrigger, percentOff, limit);
         }
 
         public bool AddSpecialSetPrice(string sku, int quantityToTrigger, double specialPrice, int limit = 0)
+        {
+            return IsValidSpecial(sku, quantityToTrigger, specialPrice, limit);
+        }
+
+        protected bool IsValidSpecial(string sku, int quantityToTrigger, double specialPrice, int limit)
         {
             if (string.IsNullOrEmpty(sku))
                 return false;
