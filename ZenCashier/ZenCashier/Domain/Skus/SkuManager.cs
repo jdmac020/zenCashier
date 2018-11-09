@@ -26,6 +26,9 @@ namespace ZenCashier
 
         public double GetPrice(string sku)
         {
+            if (string.IsNullOrEmpty(sku))
+                return -.01;
+
             return .79;
         }
 
