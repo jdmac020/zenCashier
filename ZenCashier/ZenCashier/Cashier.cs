@@ -49,6 +49,9 @@ namespace ZenCashier
             if (string.IsNullOrEmpty(sku))
                 return false;
 
+            if (quantityToTrigger <= 0)
+                return false;
+
             return true;
         }
     }
