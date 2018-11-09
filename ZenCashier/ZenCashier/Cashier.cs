@@ -46,6 +46,9 @@ namespace ZenCashier
 
         public bool AddSpecialSetPrice(string sku, int quantityToTrigger, double specialPrice, int limit = 0)
         {
+            if (string.IsNullOrEmpty(sku))
+                return false;
+
             return true;
         }
     }
