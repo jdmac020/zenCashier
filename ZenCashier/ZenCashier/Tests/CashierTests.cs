@@ -120,7 +120,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateCashier();
 
-            var result = testClass.AddSpecialPercentOff(string.Empty, 4, 100, 10);
+            var result = testClass.AddSpecialPercentOff(string.Empty, 4, 100);
 
             result.ShouldBe(false);
         }
@@ -131,6 +131,16 @@ namespace ZenCashier.Tests
             var testClass = CreateCashier();
 
             var result = testClass.AddSpecialPercentOff("carrots", 0, 100, 10);
+
+            result.ShouldBe(false);
+        }
+
+        [Fact]
+        public void AddSpecialPercentOff_NoAmountOff_ReturnsFalse()
+        {
+            var testClass = CreateCashier();
+
+            var result = testClass.AddSpecialPercentOff("cabbage", 2, 0);
 
             result.ShouldBe(false);
         }
