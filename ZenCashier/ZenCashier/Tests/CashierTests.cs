@@ -145,6 +145,16 @@ namespace ZenCashier.Tests
             result.ShouldBe(false);
         }
 
+        [Fact]
+        public void AddSpecialPercentOff_NegAmountOff_ReturnsFalse()
+        {
+            var testClass = CreateCashier();
+
+            var result = testClass.AddSpecialPercentOff("cabbage", 2, -15);
+
+            result.ShouldBe(false);
+        }
+
         #endregion
 
         #region AddSpecialSetPrice
@@ -194,7 +204,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateCashier();
 
-            var result = testClass.AddSpecialPercentOff("lifebouy", 2, 0);
+            var result = testClass.AddSpecialSetPrice("lifebouy", 2, 0);
 
             result.ShouldBe(false);
         }
@@ -204,7 +214,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateCashier();
 
-            var result = testClass.AddSpecialPercentOff("ivory", 2, -5);
+            var result = testClass.AddSpecialSetPrice("ivory", 2, -5);
 
             result.ShouldBe(false);
         }

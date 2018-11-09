@@ -46,7 +46,7 @@ namespace ZenCashier
 
         public bool AddSpecialSetPrice(string sku, int quantityToTrigger, double specialPrice, int limit = 0)
         {
-            throw new NotImplementedException();
+            return true;
         }
     }
 }
