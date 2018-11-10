@@ -26,6 +26,9 @@ namespace ZenCashier
 
         public double GetMarkdown(string sku)
         {
+            if (string.IsNullOrEmpty(sku))
+                return -.01;
+
             return .2;
         }
 
