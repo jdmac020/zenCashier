@@ -22,6 +22,12 @@ namespace ZenCashier.Domain.Order
 
         public void ScanItem(string sku, double qty)
         {
+            if (string.IsNullOrEmpty(sku))
+                return;
+
+            if (qty.Equals(0))
+                return;
+
             _subTotal += 1.78;
         }
     }
