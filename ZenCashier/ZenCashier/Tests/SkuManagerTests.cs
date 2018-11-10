@@ -202,7 +202,7 @@ namespace ZenCashier.Tests
 
             var result = testClass.GetMarkdown(SKU_ONE);
 
-            result.ShouldBe(PRICE_ONE);
+            result.ShouldBe(MARKDOWN_ONE);
         }
 
         [Fact]

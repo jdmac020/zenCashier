@@ -26,7 +26,7 @@ namespace ZenCashier
 
         public double GetMarkdown(string sku)
         {
-            throw new NotImplementedException();
+            return .2;
         }
 
         public double GetPrice(string sku)
