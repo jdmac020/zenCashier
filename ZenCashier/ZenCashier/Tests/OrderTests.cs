@@ -32,7 +32,7 @@ namespace ZenCashier.Tests
         #region Sku-only
 
         [Fact]
-        public void ScanItem_ValidSkuOnly_SubtotalEqualsPrice()
+        public void ScanItem_ValidEachSku_SubtotalEqualsPrice()
         {
             var testClass = CreateOrder_MockSkuApi();
 
@@ -42,7 +42,7 @@ namespace ZenCashier.Tests
         }
 
         [Fact]
-        public void ScanItem_InvalidSkuOnly_SubtotalEqualsZero()
+        public void ScanItem_InvalidEachSku_SubtotalEqualsZero()
         {
             var testClass = CreateOrder_MockSkuApi();
 
