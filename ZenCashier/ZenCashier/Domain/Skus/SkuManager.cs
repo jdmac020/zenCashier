@@ -8,24 +8,28 @@ namespace ZenCashier
 {
     public class SkuManager : ISkuManager
     {
+
         public bool AddMarkdown(string sku, double amount)
         {
             return IsValidSkuAndAmount(sku, amount);
         }
 
-        public bool AddSku(string id, double price, bool isEaches)
+        public bool AddSku(string id, double price)
         {
             return IsValidSkuAndAmount(id, price);
         }
 
-        public bool AddSpecialPercentOff(string sku, int quantitytoTrigger, int percentOff, int limit = 0)
+        public bool AddSpecial(string sku, int quantityToTrigger, double amount, bool isPercent, int limit = 0)
         {
-            return IsValidSpecial(sku, quantitytoTrigger, percentOff, limit);
+            return IsValidSpecial(sku, quantityToTrigger, amount, limit);
         }
 
-        public bool AddSpecialSetPrice(string sku, int quantityToTrigger, double specialPrice, int limit = 0)
+        public double GetPrice(string sku)
         {
-            return IsValidSpecial(sku, quantityToTrigger, specialPrice, limit);
+            if (string.IsNullOrEmpty(sku))
+                return -.01;
+
+            return .79;
         }
 
         protected bool IsValidSkuAndAmount(string skuId, double amount)

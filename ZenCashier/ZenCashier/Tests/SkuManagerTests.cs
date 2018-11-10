@@ -5,11 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using Shouldly;
+using static ZenCashier.Tests.TestValues;
 
 namespace ZenCashier.Tests
 {
     public class SkuManagerTests
     {
+        
         protected ISkuManager CreateSkuManager()
         {
             return new SkuManager();
@@ -22,7 +24,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSku("Tater Tots", .79, false);
+            var result = testClass.AddSku(SKU_ONE, PRICE_ONE);
 
             result.ShouldBe(true);
         }
@@ -32,7 +34,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSku("Ketchup", 1.89, true);
+            var result = testClass.AddSku(SKU_TWO, PRICE_TWO);
 
             result.ShouldBe(true);
         }
@@ -42,7 +44,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSku(string.Empty, 1.75, true);
+            var result = testClass.AddSku(string.Empty, PRICE_ONE);
 
             result.ShouldBe(false);
         }
@@ -52,7 +54,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSku("Tartar Sauce", -1.95, false);
+            var result = testClass.AddSku(SKU_THREE, PRICE_NEGATIVE);
 
             result.ShouldBe(false);
         }
@@ -66,7 +68,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddMarkdown("tater tots", .25);
+            var result = testClass.AddMarkdown(SKU_ONE, PRICE_ONE);
 
             result.ShouldBe(true);
         }
@@ -76,7 +78,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddMarkdown(string.Empty, .65);
+            var result = testClass.AddMarkdown(string.Empty, PRICE_ONE);
 
             result.ShouldBe(false);
         }
@@ -86,135 +88,61 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddMarkdown("calamari", -.85);
+            var result = testClass.AddMarkdown(SKU_TWO, PRICE_NEGATIVE);
 
             result.ShouldBe(false);
         }
 
         #endregion
 
-        #region AddSpecialPercentOff
+        #region AddSpecial
 
         [Fact]
-        public void AddSpecialPercentOff_ValidSpecialNoLimit_ReturnsTrue()
+        public void AddSpecial_ValidSpecialNoLimit_ReturnsTrue()
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecialPercentOff("french fries", 10, 50);
+            var result = testClass.AddSpecial(SKU_THREE, 2, SPECIAL_X_FOR_THREE, false);
 
             result.ShouldBe(true);
         }
 
         [Fact]
-        public void AddSpecialPercentOff_ValidSpecialLimit_ReturnsTrue()
+        public void AddSpecial_ValidSpecialLimit_ReturnsTrue()
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecialPercentOff("taco shells", 4, 100, 10);
+            var result = testClass.AddSpecial(SKU_THREE, 4, SPECIAL_BOGO_FREE, true, 10);
 
             result.ShouldBe(true);
         }
 
         [Fact]
-        public void AddSpecialPercentOff_MissingSku_ReturnsFalse()
+        public void AddSpecial_MissingSku_ReturnsFalse()
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecialPercentOff(string.Empty, 4, 100);
+            var result = testClass.AddSpecial(string.Empty, 4, SPECIAL_BOGO_HALF, true);
 
             result.ShouldBe(false);
         }
 
         [Fact]
-        public void AddSpecialPercentOff_NoTriggerQuantity_ReturnsFalse()
+        public void AddSpecial_NoTriggerQuantity_ReturnsFalse()
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecialPercentOff("carrots", 0, 100, 10);
+            var result = testClass.AddSpecial(SKU_THREE, 0, SPECIAL_BOGO_FREE, true, 10);
 
             result.ShouldBe(false);
         }
 
         [Fact]
-        public void AddSpecialPercentOff_NoAmountOff_ReturnsFalse()
+        public void AddSpecial_NoPrice_ReturnsFalse()
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecialPercentOff("cabbage", 2, 0);
-
-            result.ShouldBe(false);
-        }
-
-        [Fact]
-        public void AddSpecialPercentOff_NegAmountOff_ReturnsFalse()
-        {
-            var testClass = CreateSkuManager();
-
-            var result = testClass.AddSpecialPercentOff("cabbage", 2, -15);
-
-            result.ShouldBe(false);
-        }
-
-        [Fact]
-        public void AddSpecialPercentOff_NegativeLimit_ReturnsFalse()
-        {
-            var testClass = CreateSkuManager();
-
-            var result = testClass.AddSpecialSetPrice("lemon pledge", 2, 5, -2);
-
-            result.ShouldBe(false);
-        }
-
-        #endregion
-
-        #region AddSpecialSetPrice
-
-        [Fact]
-        public void AddSpecialSetPrice_ValidSpecialNoLimit_ReturnsTrue()
-        {
-            var testClass = CreateSkuManager();
-
-            var result = testClass.AddSpecialSetPrice("french bread", 2, 1.75);
-
-            result.ShouldBe(true);
-        }
-
-        [Fact]
-        public void AddSpecialSetPrice_ValidSpecialLimit_ReturnsTrue()
-        {
-            var testClass = CreateSkuManager();
-
-            var result = testClass.AddSpecialSetPrice("taco shells", 4, .25, 10);
-
-            result.ShouldBe(true);
-        }
-
-        [Fact]
-        public void AddSpecialSetPrice_MissingSku_ReturnsFalse()
-        {
-            var testClass = CreateSkuManager();
-
-            var result = testClass.AddSpecialSetPrice(string.Empty, 4, 100);
-
-            result.ShouldBe(false);
-        }
-
-        [Fact]
-        public void AddSpecialSetPrice_NoTriggerQuantity_ReturnsFalse()
-        {
-            var testClass = CreateSkuManager();
-
-            var result = testClass.AddSpecialSetPrice("palmolive", 0, 100, 10);
-
-            result.ShouldBe(false);
-        }
-
-        [Fact]
-        public void AddSpecialSetPrice_NoPrice_ReturnsFalse()
-        {
-            var testClass = CreateSkuManager();
-
-            var result = testClass.AddSpecialSetPrice("lifebouy", 2, 0);
+            var result = testClass.AddSpecial(SKU_TWO, 2, 0, false);
 
             result.ShouldBe(false);
         }
@@ -224,19 +152,43 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecialSetPrice("ivory", 2, -5);
+            var result = testClass.AddSpecial(SKU_ONE, 2, SPECIAL_X_FOR_NEGATIVE, false);
 
             result.ShouldBe(false);
         }
 
         [Fact]
-        public void AddSpecialSetPrice_NegativeLimit_ReturnsFalse()
+        public void AddSpecial_NegativeLimit_ReturnsFalse()
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecialSetPrice("lemon pledge", 2, 5, -2);
+            var result = testClass.AddSpecial(SKU_THREE, 2, SPECIAL_X_FOR_THREE, false, -2);
 
             result.ShouldBe(false);
+        }
+
+        #endregion
+
+        #region GetPrice
+        
+        [Fact]
+        public void GetPrice_ValidSkuId_ReturnsPriceOne()
+        {
+            var testClass = CreateSkuManager();
+
+            var result = testClass.GetPrice(SKU_ONE);
+
+            result.ShouldBe(PRICE_ONE);
+        }
+
+        [Fact]
+        public void GetPrice_InvalidSku_ReturnsNegativePenny()
+        {
+            var testClass = CreateSkuManager();
+
+            var result = testClass.GetPrice(string.Empty);
+
+            result.ShouldBe(-.01);
         }
 
         #endregion
