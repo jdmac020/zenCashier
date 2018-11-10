@@ -36,12 +36,11 @@ namespace ZenCashier.Domain.Order
         protected bool ValidateScan(string skuId, double qty = Double.NaN)
         {
             var isValid = true;
-            var skipQtyCheck = double.IsNaN(qty);
 
             if (string.IsNullOrEmpty(skuId))
                 isValid = false;
 
-            if (skipQtyCheck.Equals(false))
+            if (double.IsNaN(qty).Equals(false))
             {
                 if (qty < 0)
                     throw new InvalidWeightException();
