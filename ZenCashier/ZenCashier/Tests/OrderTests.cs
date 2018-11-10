@@ -112,7 +112,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateOrder_MockSkuApi();
 
-            testClass.ScanItem(SKU_ONE, WEIGHT_ONE);
+            testClass.ScanItem(SKU_TWO, WEIGHT_ONE);
 
             testClass.SubTotal.ShouldBe(PRICE_QTY_MARKDOWN);
         }
