@@ -18,11 +18,13 @@ namespace ZenCashier.Tests
         {
             var mockSkuApi = Substitute.For<ISkuManager>();
             mockSkuApi.GetPrice(SKU_ONE).Returns(PRICE_ONE);
-            mockSkuApi.GetMarkdown(SKU_ONE).Returns(MARKDOWN_ONE);
+            mockSkuApi.GetPrice(SKU_TWO).Returns(PRICE_TWO);
+            mockSkuApi.GetMarkdown(SKU_TWO).Returns(MARKDOWN_TWO);
 
-            var order = new Order();
-
-            order.Skus = mockSkuApi;
+            var order = new Order
+            {
+                Skus = mockSkuApi
+            };
 
             return order;
         }
@@ -32,7 +34,7 @@ namespace ZenCashier.Tests
         [Fact]
         public void ScanItem_ValidSkuOnly_SubtotalEqualsPrice()
         {
-            var testClass = new Order();
+            var testClass = CreateOrder_MockSkuApi();
 
             testClass.ScanItem(SKU_ONE);
 
@@ -42,7 +44,7 @@ namespace ZenCashier.Tests
         [Fact]
         public void ScanItem_InvalidSkuOnly_SubtotalEqualsZero()
         {
-            var testClass = new Order();
+            var testClass = CreateOrder_MockSkuApi();
 
             testClass.ScanItem(string.Empty);
 
@@ -56,7 +58,7 @@ namespace ZenCashier.Tests
         [Fact]
         public void ScanItem_ValidSkuAndWeight_SubtotalEqualsPriceTimesWeight()
         {
-            var testClass = new Order();
+            var testClass = CreateOrder_MockSkuApi();
 
             testClass.ScanItem(SKU_ONE, WEIGHT_ONE);
 
@@ -66,7 +68,7 @@ namespace ZenCashier.Tests
         [Fact]
         public void ScanItem_InvalidSkuValidWeight_SubtotalEqualsZero()
         {
-            var testClass = new Order();
+            var testClass = CreateOrder_MockSkuApi();
 
             testClass.ScanItem(string.Empty, WEIGHT_TWO);
 
@@ -76,7 +78,7 @@ namespace ZenCashier.Tests
         [Fact]
         public void ScanItem_ValidSkuZeroWeight_SubtotalEqualsZero()
         {
-            var testClass = new Order();
+            var testClass = CreateOrder_MockSkuApi();
 
             testClass.ScanItem(SKU_TWO, WEIGHT_ZERO);
 
@@ -86,7 +88,7 @@ namespace ZenCashier.Tests
         [Fact]
         public void ScanItem_ValidSkuNegativeWeight_ShouldThrowException()
         {
-            var testClass = new Order();
+            var testClass = CreateOrder_MockSkuApi();
 
             Should.Throw<InvalidWeightException>(() => testClass.ScanItem(SKU_THREE, WEIGHT_NEGATIVE));
         }
@@ -96,11 +98,11 @@ namespace ZenCashier.Tests
         #region Markdown Tests
 
         [Fact]
-        public void ScanItem_ValidEachSkuWithMarkdown_SubtotalEqualsFiftyNineCents()
+        public void ScanItem_ValidEachSkuWithMarkdown_SubtotalEqualsTwo()
         {
-            var testClass = new Order();
+            var testClass = CreateOrder_MockSkuApi();
 
-            testClass.ScanItem(SKU_ONE);
+            testClass.ScanItem(SKU_TWO);
 
             testClass.SubTotal.ShouldBe(PRICE_EACH_MARKDOWN);
         }
@@ -108,7 +110,7 @@ namespace ZenCashier.Tests
         [Fact]
         public void ScanItem_ValidQtySkuWithMarkdown_SubtotalEqualsOneThirtyThree()
         {
-            var testClass = new Order();
+            var testClass = CreateOrder_MockSkuApi();
 
             testClass.ScanItem(SKU_ONE, WEIGHT_ONE);
 

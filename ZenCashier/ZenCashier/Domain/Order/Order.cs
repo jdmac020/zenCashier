@@ -33,9 +33,9 @@ namespace ZenCashier.Domain.Order
 
             if (ValidateScan(sku))
             {
-                var price = .79;
+                var price = Skus.GetPrice(sku);
 
-                var markdown = .2;
+                var markdown = Skus.GetMarkdown(sku);
 
                 var salePrice = price - markdown;
 

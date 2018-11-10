@@ -20,10 +20,11 @@ namespace ZenCashier.Tests
         public const double PRICE_ONE = .79;
         public const double PRICE_TWO = 3;
         public const double PRICE_NEGATIVE = -.89;
-        public const double PRICE_EACH_MARKDOWN = .59;
+        public const double PRICE_EACH_MARKDOWN = 2;
         public const double PRICE_QTY_MARKDOWN = 1.33;
 
         public const double MARKDOWN_ONE = .2;
+        public const double MARKDOWN_TWO = 1;
 
         public const double SPECIAL_BOGO_FREE = 100;
         public const double SPECIAL_BOGO_HALF = 50;
