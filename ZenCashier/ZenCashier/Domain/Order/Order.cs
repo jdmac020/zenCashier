@@ -15,24 +15,42 @@ namespace ZenCashier.Domain.Order
 
         public void ScanItem(string sku)
         {
-            if (string.IsNullOrEmpty(sku))
-                return;
 
-            _subTotal += .79;
+            if (ValidateScan(sku))
+            {
+                _subTotal += .79;
+            }
+            
         }
 
         public void ScanItem(string sku, double qty)
         {
-            if (string.IsNullOrEmpty(sku))
-                return;
 
-            if (qty < 0)
-                throw new InvalidWeightException();
+            if (ValidateScan(sku, qty))
+            {
+                _subTotal += 1.78;
+            }
+            
+        }
 
-            if (qty.Equals(0))
-                return;
+        protected bool ValidateScan(string skuId, double qty = Double.NaN)
+        {
+            var isValid = true;
+            var skipQtyCheck = double.IsNaN(qty);
 
-            _subTotal += 1.78;
+            if (string.IsNullOrEmpty(skuId))
+                isValid = false;
+
+            if (skipQtyCheck.Equals(false))
+            {
+                if (qty < 0)
+                    throw new InvalidWeightException();
+
+                if (qty.Equals(0))
+                    isValid = false;
+            }
+            
+            return isValid;
         }
     }
 }

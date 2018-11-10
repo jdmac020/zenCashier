@@ -19,7 +19,7 @@ namespace ZenCashier.Tests
         [Fact]
         public void ScanItem_ValidSkuOnly_SubtotalEqualsPrice()
         {
-            IOrder testClass = new Order();
+            var testClass = new Order();
 
             testClass.ScanItem(SKU_ONE);
 
@@ -29,7 +29,7 @@ namespace ZenCashier.Tests
         [Fact]
         public void ScanItem_InvalidSkuOnly_SubtotalEqualsZero()
         {
-            IOrder testClass = new Order();
+            var testClass = new Order();
 
             testClass.ScanItem(string.Empty);
 
@@ -43,7 +43,7 @@ namespace ZenCashier.Tests
         [Fact]
         public void ScanItem_ValidSkuAndWeight_SubtotalEqualsPriceTimesWeight()
         {
-            IOrder testClass = new Order();
+            var testClass = new Order();
 
             testClass.ScanItem(SKU_ONE, WEIGHT_ONE);
 
@@ -53,7 +53,7 @@ namespace ZenCashier.Tests
         [Fact]
         public void ScanItem_InvalidSkuValidWeight_SubtotalEqualsZero()
         {
-            IOrder testClass = new Order();
+            var testClass = new Order();
 
             testClass.ScanItem(string.Empty, WEIGHT_TWO);
 
@@ -63,7 +63,7 @@ namespace ZenCashier.Tests
         [Fact]
         public void ScanItem_ValidSkuZeroWeight_SubtotalEqualsZero()
         {
-            IOrder testClass = new Order();
+            var testClass = new Order();
 
             testClass.ScanItem(SKU_TWO, WEIGHT_ZERO);
 
@@ -73,9 +73,19 @@ namespace ZenCashier.Tests
         [Fact]
         public void ScanItem_ValidSkuNegativeWeight_ShouldThrowException()
         {
-            IOrder testClass = new Order();
+            var testClass = new Order();
 
             Should.Throw<InvalidWeightException>(() => testClass.ScanItem(SKU_THREE, WEIGHT_NEGATIVE));
+        }
+
+        #endregion
+
+        #region Markdown Tests
+
+        [Fact]
+        public void ScanItem_ValidEachSku_SubtotalEqualsOneFiftyEight()
+        {
+
         }
 
         #endregion
