@@ -49,8 +49,15 @@ namespace ZenCashier.Domain.Order
 
             if (ValidateScan(sku, qty))
             {
-                
-                _subTotal += 1.78;
+                var price = Skus.GetPrice(sku);
+
+                var markdown = Skus.GetMarkdown(sku);
+
+                var unitPrice = price - markdown;
+
+                var salePrice = unitPrice * qty;
+
+                _subTotal += salePrice;
             }
 
         }
