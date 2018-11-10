@@ -8,11 +8,19 @@ using Shouldly;
 using ZenCashier.Domain.Order;
 using static ZenCashier.Tests.TestValues;
 using ZenCashier.Exceptions;
+using NSubstitute;
 
 namespace ZenCashier.Tests
 {
     public class OrderTests
     {
+        protected IOrder CreateOrder_MockSkuApi()
+        {
+            var mockSkuApi = Substitute.For<ISkuManager>();
+            mockSkuApi.GetPrice(SKU_ONE).Returns(PRICE_ONE);
+
+            return new Order();
+        }
 
         #region Sku-only
 
@@ -83,9 +91,23 @@ namespace ZenCashier.Tests
         #region Markdown Tests
 
         [Fact]
-        public void ScanItem_ValidEachSku_SubtotalEqualsOneFiftyEight()
+        public void ScanItem_ValidEachSkuWithMarkdown_SubtotalEqualsFiftyNineCents()
         {
+            var testClass = new Order();
 
+            testClass.ScanItem(SKU_ONE);
+
+            testClass.SubTotal.ShouldBe(PRICE_EACH_MARKDOWN);
+        }
+
+        [Fact]
+        public void ScanItem_ValidQtySkuWithMarkdown_SubtotalEqualsOneThirtyThree()
+        {
+            var testClass = new Order();
+
+            testClass.ScanItem(SKU_ONE, WEIGHT_ONE);
+
+            testClass.SubTotal.ShouldBe(PRICE_QTY_MARKDOWN);
         }
 
         #endregion

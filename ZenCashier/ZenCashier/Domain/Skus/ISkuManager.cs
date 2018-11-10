@@ -15,5 +15,7 @@ namespace ZenCashier
         bool AddSpecial(string sku, int quantityToTrigger, double amount, bool isPercentOff, int limit = 0);
 
         double GetPrice(string sku);
+
+        double GetMarkdown(string sku);
     }
 }

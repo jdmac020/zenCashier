@@ -24,6 +24,11 @@ namespace ZenCashier
             return ValidateSpecial(sku, quantityToTrigger, amount, limit);
         }
 
+        public double GetMarkdown(string sku)
+        {
+            throw new NotImplementedException();
+        }
+
         public double GetPrice(string sku)
         {
             if (string.IsNullOrEmpty(sku))
