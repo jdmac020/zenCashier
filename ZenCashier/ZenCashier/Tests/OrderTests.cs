@@ -18,8 +18,13 @@ namespace ZenCashier.Tests
         {
             var mockSkuApi = Substitute.For<ISkuManager>();
             mockSkuApi.GetPrice(SKU_ONE).Returns(PRICE_ONE);
+            mockSkuApi.GetMarkdown(SKU_ONE).Returns(MARKDOWN_ONE);
 
-            return new Order();
+            var order = new Order();
+
+            order.Skus = mockSkuApi;
+
+            return order;
         }
 
         #region Sku-only
