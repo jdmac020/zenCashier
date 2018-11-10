@@ -39,9 +39,7 @@ namespace ZenCashier.Tests
         #endregion
 
         #region With Weight
-
         
-
         [Fact]
         public void ScanItem_ValidSkuAndWeight_SubtotalEqualsPriceTimesWeight()
         {

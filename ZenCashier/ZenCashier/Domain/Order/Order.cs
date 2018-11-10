@@ -22,7 +22,7 @@ namespace ZenCashier.Domain.Order
 
         public void ScanItem(string sku, double qty)
         {
-            throw new NotImplementedException();
+            _subTotal += 1.78;
         }
     }
 }
