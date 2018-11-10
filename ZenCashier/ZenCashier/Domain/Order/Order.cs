@@ -11,6 +11,21 @@ namespace ZenCashier.Domain.Order
     {
         public double SubTotal { get { return Math.Round(_subTotal, 2); } }
 
+        public ISkuManager Skus
+        {
+            get
+            {
+                if (_skus == null)
+                    _skus = new SkuManager();
+
+                return _skus;
+            }
+
+            set { _skus = value; }
+        }
+
+        private ISkuManager _skus;
+
         private double _subTotal;
 
         public void ScanItem(string sku)
@@ -18,9 +33,15 @@ namespace ZenCashier.Domain.Order
 
             if (ValidateScan(sku))
             {
-                _subTotal += .79;
+                var price = Skus.GetPrice(sku);
+
+                var markdown = Skus.GetMarkdown(sku);
+
+                var salePrice = price - markdown;
+
+                _subTotal += salePrice;
             }
-            
+
         }
 
         public void ScanItem(string sku, double qty)
@@ -28,9 +49,17 @@ namespace ZenCashier.Domain.Order
 
             if (ValidateScan(sku, qty))
             {
-                _subTotal += 1.78;
+                var price = Skus.GetPrice(sku);
+
+                var markdown = Skus.GetMarkdown(sku);
+
+                var unitPrice = price - markdown;
+
+                var salePrice = unitPrice * qty;
+
+                _subTotal += salePrice;
             }
-            
+
         }
 
         protected bool ValidateScan(string skuId, double qty = Double.NaN)
@@ -48,7 +77,7 @@ namespace ZenCashier.Domain.Order
                 if (qty.Equals(0))
                     isValid = false;
             }
-            
+
             return isValid;
         }
     }

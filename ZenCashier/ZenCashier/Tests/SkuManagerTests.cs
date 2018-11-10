@@ -192,5 +192,29 @@ namespace ZenCashier.Tests
         }
 
         #endregion
+
+        #region GetMarkdown
+
+        [Fact]
+        public void GetMarkdown_ValidSkuId_ReturnsPriceOne()
+        {
+            var testClass = CreateSkuManager();
+
+            var result = testClass.GetMarkdown(SKU_ONE);
+
+            result.ShouldBe(MARKDOWN_ONE);
+        }
+
+        [Fact]
+        public void GetMarkdown_InvalidSku_ReturnsNegativePenny()
+        {
+            var testClass = CreateSkuManager();
+
+            var result = testClass.GetMarkdown(string.Empty);
+
+            result.ShouldBe(-.01);
+        }
+
+        #endregion
     }
 }

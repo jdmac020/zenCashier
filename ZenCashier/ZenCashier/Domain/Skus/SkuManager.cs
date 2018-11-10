@@ -9,30 +9,55 @@ namespace ZenCashier
     public class SkuManager : ISkuManager
     {
 
+        private const double ERROR_RETURN = -.01;
+
         public bool AddMarkdown(string sku, double amount)
         {
-            return IsValidSkuAndAmount(sku, amount);
+            return ValidateSkuEntry(sku, amount);
         }
 
         public bool AddSku(string id, double price)
         {
-            return IsValidSkuAndAmount(id, price);
+            return ValidateSkuEntry(id, price);
         }
 
         public bool AddSpecial(string sku, int quantityToTrigger, double amount, bool isPercent, int limit = 0)
         {
-            return IsValidSpecial(sku, quantityToTrigger, amount, limit);
+            return ValidateSpecialEntry(sku, quantityToTrigger, amount, limit);
+        }
+
+        public double GetMarkdown(string sku)
+        {
+
+            var markdown = ERROR_RETURN;
+
+            if (ValidateSkuRequest(sku))
+            {
+                markdown = .2;
+            }
+
+            return markdown;
         }
 
         public double GetPrice(string sku)
         {
-            if (string.IsNullOrEmpty(sku))
-                return -.01;
 
-            return .79;
+            var price = ERROR_RETURN;
+
+            if (ValidateSkuRequest(sku))
+            {
+                price = .79;
+            }
+
+            return price;
         }
 
-        protected bool IsValidSkuAndAmount(string skuId, double amount)
+        protected bool ValidateSkuRequest(string skuId)
+        {
+            return ! string.IsNullOrEmpty(skuId);
+        }
+
+        protected bool ValidateSkuEntry(string skuId, double amount)
         {
             if (string.IsNullOrEmpty(skuId))
                 return false;
@@ -43,7 +68,7 @@ namespace ZenCashier
             return true;
         }
 
-        protected bool IsValidSpecial(string sku, int quantityToTrigger, double specialPrice, int limit)
+        protected bool ValidateSpecialEntry(string sku, int quantityToTrigger, double specialPrice, int limit)
         {
             if (string.IsNullOrEmpty(sku))
                 return false;
