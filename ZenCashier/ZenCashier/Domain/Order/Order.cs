@@ -33,11 +33,7 @@ namespace ZenCashier.Domain.Order
 
             if (ValidateScan(sku))
             {
-                var price = Skus.GetPrice(sku);
-
-                var markdown = Skus.GetMarkdown(sku);
-
-                var salePrice = price - markdown;
+                var salePrice = GetUnitPrice(sku);
 
                 _subTotal += salePrice;
             }
@@ -49,17 +45,22 @@ namespace ZenCashier.Domain.Order
 
             if (ValidateScan(sku, qty))
             {
-                var price = Skus.GetPrice(sku);
-
-                var markdown = Skus.GetMarkdown(sku);
-
-                var unitPrice = price - markdown;
+                var unitPrice = GetUnitPrice(sku);
 
                 var salePrice = unitPrice * qty;
 
                 _subTotal += salePrice;
             }
 
+        }
+
+        protected double GetUnitPrice(string sku)
+        {
+            var price = Skus.GetPrice(sku);
+
+            var markdown = Skus.GetMarkdown(sku);
+
+            return price - markdown;
         }
 
         protected bool ValidateScan(string skuId, double qty = Double.NaN)
