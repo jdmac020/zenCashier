@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ZenCashier.Exceptions;
 
 namespace ZenCashier.Domain.Order
 {
@@ -24,6 +25,9 @@ namespace ZenCashier.Domain.Order
         {
             if (string.IsNullOrEmpty(sku))
                 return;
+
+            if (qty < 0)
+                throw new InvalidWeightException();
 
             if (qty.Equals(0))
                 return;

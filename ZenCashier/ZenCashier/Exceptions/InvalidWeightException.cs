@@ -8,8 +8,6 @@ namespace ZenCashier.Exceptions
 {
     public class InvalidWeightException : Exception
     {
-        public InvalidWeightException() : base()
-        {
-        }
+        public InvalidWeightException() : base() { }
     }
 }
