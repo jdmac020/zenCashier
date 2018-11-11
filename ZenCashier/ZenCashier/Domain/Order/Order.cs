@@ -38,6 +38,18 @@ namespace ZenCashier.Domain.Order
                 var salePrice = GetUnitPrice(sku);
 
                 _subTotal += salePrice;
+
+                var logRecord = ScanLog.Where(record => record.Key == sku).FirstOrDefault();
+
+                if (string.IsNullOrEmpty(logRecord.Key))
+                {
+                    ScanLog.Add(sku, 1);
+                }
+                else
+                {
+                    ScanLog[sku]++;
+                }
+                
             }
 
         }
