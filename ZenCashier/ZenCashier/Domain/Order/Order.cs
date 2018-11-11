@@ -63,11 +63,11 @@ namespace ZenCashier.Domain.Order
 
             var skuSpecial = Skus.GetSpecial(sku);
 
-            if (skuSpecial.Amount != -.01)
+            if (skuSpecial != null && skuSpecial.Amount != -.01)
             {
-                var itemsScanned = ScanLog[sku];
-
-                if (itemsScanned % skuSpecial.TriggerQuantity == 0)
+                var itemsScanned = GetScannedQuantity(sku);
+                
+                if (itemsScanned > 0 && itemsScanned % skuSpecial.TriggerQuantity == 0)
                 {
                     var discountAsDecimal = skuSpecial.Amount / 100;
 
@@ -81,6 +81,20 @@ namespace ZenCashier.Domain.Order
 
             LogScannedItem(sku, scanQty);
 
+        }
+
+        protected double GetScannedQuantity(string skuId)
+        {
+            var logRecord = ScanLog.Where(record => record.Key == skuId).FirstOrDefault();
+
+            if (string.IsNullOrEmpty(logRecord.Key))
+            {
+                return 0;
+            }
+            else
+            {
+                return logRecord.Value;
+            }
         }
 
         protected void LogScannedItem(string skuId, double qty)

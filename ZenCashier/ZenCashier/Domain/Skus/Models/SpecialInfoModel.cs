@@ -10,5 +10,6 @@ namespace ZenCashier.Domain.Skus.Models
     {
         public double Amount { get; set; }
         public int TriggerQuantity { get; set; }
+        public bool IsPercentOff { get; internal set; }
     }
 }

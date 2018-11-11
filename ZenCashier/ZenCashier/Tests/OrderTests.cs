@@ -14,16 +14,57 @@ namespace ZenCashier.Tests
 {
     public class OrderTests
     {
-        protected IOrder CreateOrder_MockSkuApi()
+        protected IOrder CreateOrder_MockSkuApi_Specials()
+        {
+            var mockSkuApi = Substitute.For<ISkuManager>();
+            mockSkuApi.GetPrice(SKU_ONE).Returns(PRICE_ONE);
+            mockSkuApi.GetSpecial(SKU_TWO).Returns(new Domain.Skus.Models.SpecialInfoModel
+            {
+                Amount = .5,
+                TriggerQuantity = 4,
+                IsPercentOff = false
+            });
+
+            mockSkuApi.GetPrice(SKU_TWO).Returns(PRICE_TWO);
+            mockSkuApi.GetSpecial(SKU_TWO).Returns(new Domain.Skus.Models.SpecialInfoModel
+            {
+                Amount = 2,
+                TriggerQuantity = 2,
+                IsPercentOff = false
+            });
+
+            mockSkuApi.GetPrice(SKU_THREE).Returns(PRICE_THREE);
+            mockSkuApi.GetSpecial(SKU_THREE).Returns(new Domain.Skus.Models.SpecialInfoModel
+            {
+                Amount = SPECIAL_BOGO_FREE,
+                TriggerQuantity = 3,
+                IsPercentOff = true
+            });
+
+            mockSkuApi.GetPrice(SKU_FOUR).Returns(PRICE_FOUR);
+            mockSkuApi.GetSpecial(SKU_FOUR).Returns(new Domain.Skus.Models.SpecialInfoModel
+            {
+                Amount = SPECIAL_BOGO_HALF,
+                TriggerQuantity = 2,
+                IsPercentOff = true
+            });
+
+            var order = new Order
+            {
+                Skus = mockSkuApi
+            };
+
+            return order;
+        }
+
+        protected IOrder CreateOrder_MockSkuApi_Markdowns()
         {
             var mockSkuApi = Substitute.For<ISkuManager>();
             mockSkuApi.GetPrice(SKU_ONE).Returns(PRICE_ONE);
             mockSkuApi.GetPrice(SKU_TWO).Returns(PRICE_TWO);
+            mockSkuApi.GetPrice(SKU_THREE).Returns(PRICE_THREE);
             mockSkuApi.GetMarkdown(SKU_TWO).Returns(MARKDOWN_TWO);
-            mockSkuApi.GetSpecial(SKU_THREE).Returns(new Domain.Skus.Models.SpecialInfoModel
-            {
-                Amount = 100
-            });
+
 
             var order = new Order
             {
@@ -173,7 +214,7 @@ namespace ZenCashier.Tests
         [Fact]
         public void ScanItem_ValidEachSkuWithMarkdown_SubtotalEqualsTwo()
         {
-            var testClass = CreateOrder_MockSkuApi();
+            var testClass = CreateOrder_MockSkuApi_Markdowns();
 
             testClass.ScanItem(SKU_TWO);
 
@@ -185,7 +226,7 @@ namespace ZenCashier.Tests
         [Fact]
         public void ScanItem_ValidQtySkuWithMarkdown_SubtotalEqualsOneThirtyThree()
         {
-            var testClass = CreateOrder_MockSkuApi();
+            var testClass = CreateOrder_MockSkuApi_Markdowns();
 
             testClass.ScanItem(SKU_TWO, WEIGHT_ONE);
 
@@ -199,26 +240,44 @@ namespace ZenCashier.Tests
         #region Special Tests -- Buy One Get One
 
         [Fact]
-        public void ScanItem_ThreeValidEachSkuWithBogo_SubtotalEqualsPrice2x()
+        public void ScanItem_BuyFourGetOneFree_SubtotalEqualsPrice3x()
         {
-            var testClass = CreateOrder_MockSkuApi();
+            var testClass = CreateOrder_MockSkuApi_Specials();
 
-            var timesToExecute = 3;
+            var timesToExecute = 4;
 
             for (int i = 0; i < timesToExecute; i++)
             {
                 testClass.ScanItem(SKU_THREE);
             }
 
-            testClass.SubTotal.ShouldBe(PRICE_THREE * 2);
+            testClass.SubTotal.ShouldBe(PRICE_THREE * 3);
             testClass.ScanLog.Count.ShouldBe(1);
-            testClass.ScanLog[SKU_THREE].ShouldBe(3);
+            testClass.ScanLog[SKU_THREE].ShouldBe(4);
         }
 
         [Fact]
-        public void ScanItem_ThreeValidEachSkuNoSpecial_SubtotalEqualsPrice3x()
+        public void ScanItem_BuyTwoGetOneHalfOff_SubtotalEquals2fullPriceOneHalf()
         {
-            var testClass = CreateOrder_MockSkuApi();
+            var testClass = CreateOrder_MockSkuApi_Specials();
+            var expectedSubtotal = Math.Round((PRICE_FOUR * 2) + (PRICE_FOUR * .5),2);
+
+            var timesToExecute = 3;
+
+            for (int i = 0; i < timesToExecute; i++)
+            {
+                testClass.ScanItem(SKU_FOUR);
+            }
+
+            testClass.SubTotal.ShouldBe(expectedSubtotal);
+            testClass.ScanLog.Count.ShouldBe(1);
+            testClass.ScanLog[SKU_FOUR].ShouldBe(3);
+        }
+
+        [Fact]
+        public void ScanItem_BuyThreeNoSpecial_SubtotalEqualsPrice3x()
+        {
+            var testClass = CreateOrder_MockSkuApi_PriceOnly();
 
             var timesToExecute = 3;
 
