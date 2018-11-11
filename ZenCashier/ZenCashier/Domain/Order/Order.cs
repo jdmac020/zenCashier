@@ -24,6 +24,8 @@ namespace ZenCashier.Domain.Order
             set { _skus = value; }
         }
 
+        public Dictionary<string, int> ScanLog { get; set; } = new Dictionary<string, int>();
+
         private ISkuManager _skus;
 
         private double _subTotal;
