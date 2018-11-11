@@ -53,6 +53,11 @@ namespace ZenCashier
             return price;
         }
 
+        public SpecialInfoModel GetSpecial(string sku)
+        {
+            return new SpecialInfoModel { Amount = 100 };
+        }
+
         protected bool ValidateSkuRequest(string skuId)
         {
             return ! string.IsNullOrEmpty(skuId);
@@ -86,9 +91,6 @@ namespace ZenCashier
             return true;
         }
 
-        public SpecialInfoModel GetSpecial(string sku)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }
