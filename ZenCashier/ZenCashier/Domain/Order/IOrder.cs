@@ -12,7 +12,7 @@ namespace ZenCashier.Domain.Order
         
         double SubTotal { get; }
 
-        Dictionary<string, int> ScanLog { get; set; }
+        Dictionary<string, double> ScanLog { get; set; }
 
         void ScanItem(string sku);
 

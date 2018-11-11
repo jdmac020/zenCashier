@@ -24,7 +24,7 @@ namespace ZenCashier.Domain.Order
             set { _skus = value; }
         }
 
-        public Dictionary<string, int> ScanLog { get; set; } = new Dictionary<string, int>();
+        public Dictionary<string, double> ScanLog { get; set; } = new Dictionary<string, double>();
 
         private ISkuManager _skus;
 
@@ -64,6 +64,17 @@ namespace ZenCashier.Domain.Order
                 var salePrice = unitPrice * qty;
 
                 _subTotal += salePrice;
+
+                var logRecord = ScanLog.Where(record => record.Key == sku).FirstOrDefault();
+
+                if (string.IsNullOrEmpty(logRecord.Key))
+                {
+                    ScanLog.Add(sku, qty);
+                }
+                else
+                {
+                    ScanLog[sku] += qty;
+                }
             }
 
         }
