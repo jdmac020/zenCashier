@@ -61,6 +61,22 @@ namespace ZenCashier.Domain.Order
                 price = price * scanQty;
             }
 
+            var skuSpecial = Skus.GetSpecial(sku);
+
+            if (skuSpecial.Amount != -.01)
+            {
+                var itemsScanned = ScanLog[sku];
+
+                if (itemsScanned % skuSpecial.TriggerQuantity == 0)
+                {
+                    var discountAsDecimal = skuSpecial.Amount / 100;
+
+                    var discount = price * discountAsDecimal;
+
+                    price = price - discount;
+                }
+            }
+
             _subTotal += price;
 
             LogScannedItem(sku, scanQty);

@@ -9,5 +9,6 @@ namespace ZenCashier.Domain.Skus.Models
     public class SpecialInfoModel
     {
         public double Amount { get; set; }
+        public int TriggerQuantity { get; set; }
     }
 }
