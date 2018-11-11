@@ -216,5 +216,29 @@ namespace ZenCashier.Tests
         }
 
         #endregion
+
+        #region GetSpecial
+
+        [Fact]
+        public void GetSpecial_ValidSkuId_ReturnsPriceOne()
+        {
+            var testClass = CreateSkuManager();
+
+            var result = testClass.GetSpecial(SKU_THREE);
+
+            result.Amount.ShouldBe(100);
+        }
+
+        [Fact]
+        public void GetSpecial_InvalidSku_ReturnsEmptySpecial()
+        {
+            var testClass = CreateSkuManager();
+
+            var result = testClass.GetSpecial(string.Empty);
+
+            result.Amount.ShouldBe(0);
+        }
+
+        #endregion
     }
 }

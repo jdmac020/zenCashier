@@ -8,7 +8,11 @@ namespace ZenCashier.Domain.Order
 {
     public interface IOrder
     {
+        ISkuManager Skus { get; set; }
+        
         double SubTotal { get; }
+
+        Dictionary<string, double> ScanLog { get; set; }
 
         void ScanItem(string sku);
 

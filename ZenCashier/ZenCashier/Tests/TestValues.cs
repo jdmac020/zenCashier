@@ -11,6 +11,7 @@ namespace ZenCashier.Tests
         public const string SKU_ONE = "tater tots";
         public const string SKU_TWO = "ketchup";
         public const string SKU_THREE = "palmolive";
+        public const string SKU_FOUR = "frozen pizza";
 
         public const double WEIGHT_ONE = 2.25;
         public const double WEIGHT_TWO = 1;
@@ -19,6 +20,8 @@ namespace ZenCashier.Tests
         
         public const double PRICE_ONE = .79;
         public const double PRICE_TWO = 3;
+        public const double PRICE_THREE = 1.5;
+        public const double PRICE_FOUR = 3.99;
         public const double PRICE_NEGATIVE = -.89;
         public const double PRICE_EACH_MARKDOWN = 2;
         public const double PRICE_QTY_MARKDOWN = 4.5;

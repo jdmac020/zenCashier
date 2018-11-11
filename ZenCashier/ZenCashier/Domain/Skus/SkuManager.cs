@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ZenCashier.Domain.Skus.Models;
 
 namespace ZenCashier
 {
@@ -52,6 +53,18 @@ namespace ZenCashier
             return price;
         }
 
+        public SpecialInfoModel GetSpecial(string sku)
+        {
+            var returnInfo = new SpecialInfoModel();
+
+            if (ValidateSkuRequest(sku))
+            {
+                returnInfo.Amount = 100;
+            }
+
+            return returnInfo;
+        }
+
         protected bool ValidateSkuRequest(string skuId)
         {
             return ! string.IsNullOrEmpty(skuId);
@@ -84,5 +97,7 @@ namespace ZenCashier
 
             return true;
         }
+
+        
     }
 }

@@ -24,6 +24,8 @@ namespace ZenCashier.Domain.Order
             set { _skus = value; }
         }
 
+        public Dictionary<string, double> ScanLog { get; set; } = new Dictionary<string, double>();
+
         private ISkuManager _skus;
 
         private double _subTotal;
@@ -33,13 +35,7 @@ namespace ZenCashier.Domain.Order
 
             if (ValidateScan(sku))
             {
-                var price = Skus.GetPrice(sku);
-
-                var markdown = Skus.GetMarkdown(sku);
-
-                var salePrice = price - markdown;
-
-                _subTotal += salePrice;
+                UpdateSubTotal(sku);
             }
 
         }
@@ -49,17 +45,79 @@ namespace ZenCashier.Domain.Order
 
             if (ValidateScan(sku, qty))
             {
-                var price = Skus.GetPrice(sku);
-
-                var markdown = Skus.GetMarkdown(sku);
-
-                var unitPrice = price - markdown;
-
-                var salePrice = unitPrice * qty;
-
-                _subTotal += salePrice;
+                UpdateSubTotal(sku, qty);
             }
 
+        }
+
+        protected void UpdateSubTotal(string sku, double qty = double.NaN)
+        {
+            var price = GetUnitPrice(sku);
+            double scanQty = 1;
+            
+            if (double.IsNaN(qty).Equals(false))
+            {
+                scanQty = qty;
+                price = price * scanQty;
+            }
+
+            var skuSpecial = Skus.GetSpecial(sku);
+
+            if (skuSpecial != null && skuSpecial.Amount != -.01)
+            {
+                var itemsScanned = GetScannedQuantity(sku);
+                
+                if (itemsScanned > 0 && itemsScanned % skuSpecial.TriggerQuantity == 0)
+                {
+                    var discountAsDecimal = skuSpecial.Amount / 100;
+
+                    var discount = price * discountAsDecimal;
+
+                    price = price - discount;
+                }
+            }
+
+            _subTotal += price;
+
+            LogScannedItem(sku, scanQty);
+
+        }
+
+        protected double GetScannedQuantity(string skuId)
+        {
+            var logRecord = ScanLog.Where(record => record.Key == skuId).FirstOrDefault();
+
+            if (string.IsNullOrEmpty(logRecord.Key))
+            {
+                return 0;
+            }
+            else
+            {
+                return logRecord.Value;
+            }
+        }
+
+        protected void LogScannedItem(string skuId, double qty)
+        {
+            var logRecord = ScanLog.Where(record => record.Key == skuId).FirstOrDefault();
+
+            if (string.IsNullOrEmpty(logRecord.Key))
+            {
+                ScanLog.Add(skuId, qty);
+            }
+            else
+            {
+                ScanLog[skuId] += qty;
+            }
+        }
+
+        protected double GetUnitPrice(string sku)
+        {
+            var price = Skus.GetPrice(sku);
+
+            var markdown = Skus.GetMarkdown(sku);
+
+            return price - markdown;
         }
 
         protected bool ValidateScan(string skuId, double qty = Double.NaN)
