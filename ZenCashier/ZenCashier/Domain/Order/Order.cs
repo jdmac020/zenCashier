@@ -35,21 +35,7 @@ namespace ZenCashier.Domain.Order
 
             if (ValidateScan(sku))
             {
-                var salePrice = GetUnitPrice(sku);
-
-                _subTotal += salePrice;
-
-                var logRecord = ScanLog.Where(record => record.Key == sku).FirstOrDefault();
-
-                if (string.IsNullOrEmpty(logRecord.Key))
-                {
-                    ScanLog.Add(sku, 1);
-                }
-                else
-                {
-                    ScanLog[sku]++;
-                }
-                
+                UpdateSubTotal(sku);
             }
 
         }
@@ -59,24 +45,40 @@ namespace ZenCashier.Domain.Order
 
             if (ValidateScan(sku, qty))
             {
-                var unitPrice = GetUnitPrice(sku);
-
-                var salePrice = unitPrice * qty;
-
-                _subTotal += salePrice;
-
-                var logRecord = ScanLog.Where(record => record.Key == sku).FirstOrDefault();
-
-                if (string.IsNullOrEmpty(logRecord.Key))
-                {
-                    ScanLog.Add(sku, qty);
-                }
-                else
-                {
-                    ScanLog[sku] += qty;
-                }
+                UpdateSubTotal(sku, qty);
             }
 
+        }
+
+        protected void UpdateSubTotal(string sku, double qty = double.NaN)
+        {
+            var price = GetUnitPrice(sku);
+            double scanQty = 1;
+            
+            if (double.IsNaN(qty).Equals(false))
+            {
+                scanQty = qty;
+                price = price * scanQty;
+            }
+
+            _subTotal += price;
+
+            LogScannedItem(sku, scanQty);
+
+        }
+
+        protected void LogScannedItem(string skuId, double qty)
+        {
+            var logRecord = ScanLog.Where(record => record.Key == skuId).FirstOrDefault();
+
+            if (string.IsNullOrEmpty(logRecord.Key))
+            {
+                ScanLog.Add(skuId, qty);
+            }
+            else
+            {
+                ScanLog[skuId] += qty;
+            }
         }
 
         protected double GetUnitPrice(string sku)
