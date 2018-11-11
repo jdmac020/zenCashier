@@ -55,6 +55,9 @@ namespace ZenCashier
 
         public SpecialInfoModel GetSpecial(string sku)
         {
+            if (string.IsNullOrEmpty(sku))
+                return new SpecialInfoModel();
+
             return new SpecialInfoModel { Amount = 100 };
         }
 
