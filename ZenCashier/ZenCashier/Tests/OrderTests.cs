@@ -28,8 +28,8 @@ namespace ZenCashier.Tests
 
             return order;
         }
-
-        #region Sku-only
+        
+        #region Scan simple price Sku-only
 
         [Fact]
         public void ScanItem_ValidEachSku_SubtotalEqualsPrice()
@@ -51,9 +51,24 @@ namespace ZenCashier.Tests
             testClass.SubTotal.ShouldBe(0);
         }
 
+        [Fact]
+        public void ScanItem_ValidEachSkuFourScans_SubtotalEqualsPrice4x()
+        {
+            var testClass = CreateOrder_MockSkuApi();
+
+            var timesToExecute = 4;
+
+            for (int i = 0; i < timesToExecute; i++)
+            {
+                testClass.ScanItem(SKU_ONE);
+            }
+
+            testClass.SubTotal.ShouldBe(PRICE_ONE * timesToExecute);
+        }
+
         #endregion
 
-        #region With Weight
+        #region Scan simple price With Weight
         
         [Fact]
         public void ScanItem_ValidSkuAndWeight_SubtotalEqualsPriceTimesWeight()
@@ -115,6 +130,40 @@ namespace ZenCashier.Tests
             testClass.ScanItem(SKU_TWO, WEIGHT_ONE);
 
             testClass.SubTotal.ShouldBe(PRICE_QTY_MARKDOWN);
+        }
+
+        #endregion
+
+        #region Special Tests -- Buy One Get One
+
+        [Fact]
+        public void ScanItem_ThreeValidEachSkuWithBogo_SubtotalEqualsPrice2x()
+        {
+            var testClass = CreateOrder_MockSkuApi();
+
+            var timesToExecute = 3;
+
+            for (int i = 0; i < timesToExecute; i++)
+            {
+                testClass.ScanItem(SKU_THREE);
+            }
+
+            testClass.SubTotal.ShouldBe(PRICE_THREE * 2);
+        }
+
+        [Fact]
+        public void ScanItem_ThreeValidEachSkuNoSpecial_SubtotalEqualsPrice3x()
+        {
+            var testClass = CreateOrder_MockSkuApi();
+
+            var timesToExecute = 3;
+
+            for (int i = 0; i < timesToExecute; i++)
+            {
+                testClass.ScanItem(SKU_ONE);
+            }
+
+            testClass.SubTotal.ShouldBe(PRICE_ONE * timesToExecute);
         }
 
         #endregion

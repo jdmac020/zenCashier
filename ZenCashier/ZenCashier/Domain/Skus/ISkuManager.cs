@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ZenCashier.Domain.Skus.Models;
 
 namespace ZenCashier
 {
@@ -17,5 +18,7 @@ namespace ZenCashier
         double GetPrice(string sku);
 
         double GetMarkdown(string sku);
+
+        SpecialInfoModel GetSpecial(string sku);
     }
 }

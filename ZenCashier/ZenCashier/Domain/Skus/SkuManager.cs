@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ZenCashier.Domain.Skus.Models;
 
 namespace ZenCashier
 {
@@ -83,6 +84,11 @@ namespace ZenCashier
                 return false;
 
             return true;
+        }
+
+        public SpecialInfoModel GetSpecial(string sku)
+        {
+            throw new NotImplementedException();
         }
     }
 }

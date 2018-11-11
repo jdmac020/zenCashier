@@ -72,6 +72,7 @@
   <ItemGroup>
     <Compile Include="Domain\Order\IOrder.cs" />
     <Compile Include="Domain\Order\Order.cs" />
+    <Compile Include="Domain\Skus\Models\SpecialInfoModel.cs" />
     <Compile Include="Domain\Skus\SkuManager.cs" />
     <Compile Include="Domain\Skus\ISkuManager.cs" />
     <Compile Include="Exceptions\InvalidWeightException.cs" />
