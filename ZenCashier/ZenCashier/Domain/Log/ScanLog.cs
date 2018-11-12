@@ -21,7 +21,7 @@ namespace ZenCashier.Domain.Log
                 QuantityScanned = qty
             });
         }
-        
+        gfd
         public IEnumerable<ScannedItemModel> GetScansForSku(string sku)
         {
             throw new NotImplementedException();

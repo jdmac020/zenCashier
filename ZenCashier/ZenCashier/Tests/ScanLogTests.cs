@@ -12,9 +12,6 @@ namespace ZenCashier.Tests
 {
     public class ScanLogTests
     {
-
-        #region LogScan
-
         [Fact]
         public void LogScan_ValidScan_SubTotalMatches()
         {
@@ -55,51 +52,5 @@ namespace ZenCashier.Tests
 
             testClass.SubTotal.ShouldBe(expectedResult);
         }
-
-        #endregion
-
-        #region GetScans
-
-        [Fact]
-        public void GetScansForSku_EmptyList_ReturnsZero()
-        {
-            var testClass = new ScanLog();
-
-            var result = testClass.GetScansForSku(SKU_ONE);
-
-            result.Count().ShouldBe(0);
-        }
-
-        [Fact]
-        public void GetScansForSku_SkuWithThreeScans_ReturnsThreeRecords()
-        {
-            var testClass = new ScanLog();
-
-            var result = testClass.GetScansForSku(SKU_ONE);
-
-            result.Count().ShouldBe(3);
-        }
-
-        [Fact]
-        public void GetScansForSku_SkuWithTwoScans_ReturnsTwoRecords()
-        {
-            var testClass = new ScanLog();
-
-            var result = testClass.GetScansForSku(SKU_TWO);
-
-            result.Count().ShouldBe(2);
-        }
-
-        [Fact]
-        public void GetScansForSku_SkuWithZeroScans_ReturnsZero()
-        {
-            var testClass = new ScanLog();
-
-            var result = testClass.GetScansForSku(SKU_THREE);
-
-            result.Count().ShouldBe(0);
-        }
-
-        #endregion
     }
 }
