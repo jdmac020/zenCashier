@@ -67,7 +67,7 @@ namespace ZenCashier.Domain.Order
             {
                 var itemsScanned = GetScannedQuantity(sku);
                 
-                if (itemsScanned > 0 && itemsScanned % skuSpecial.TriggerQuantity == 0 && itemsScanned < skuSpecial.LimitQuantity)
+                if ( (itemsScanned > 0 && itemsScanned % skuSpecial.TriggerQuantity == 0) && (skuSpecial.LimitQuantity == 0 || itemsScanned < skuSpecial.LimitQuantity))
                 {
 
                     if (skuSpecial.IsPercentOff)
