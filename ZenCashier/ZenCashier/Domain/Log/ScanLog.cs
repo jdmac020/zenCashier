@@ -10,23 +10,11 @@ namespace ZenCashier.Domain.Log
     {
         public double SubTotal { get { return GetSubTotal(); } }
 
-        public List<ScannedItemModel> ScannedItems
-        {
-            get
-            {
-                if (_scannedItems is null)
-                    _scannedItems = new List<ScannedItemModel>();
-
-                return _scannedItems;
-            }
-            set { _scannedItems = value; }
-        }
-
-        protected List<ScannedItemModel> _scannedItems;
+        protected List<ScannedItemModel> _scannedItems = new List<ScannedItemModel>();
 
         public void LogScan(string skuId, double salePrice, double qty)
         {
-            ScannedItems.Add(new ScannedItemModel
+            _scannedItems.Add(new ScannedItemModel
             {
                 SkuId = skuId,
                 SalePrice = salePrice,
@@ -41,7 +29,7 @@ namespace ZenCashier.Domain.Log
 
         protected double GetSubTotal()
         {
-            var subTotal = ScannedItems.Sum(item => item.SalePrice);
+            var subTotal = _scannedItems.Sum(item => item.SalePrice);
 
             return Math.Round(subTotal, 2);
         }
