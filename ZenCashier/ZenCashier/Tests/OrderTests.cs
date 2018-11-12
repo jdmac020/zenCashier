@@ -292,11 +292,5 @@ namespace ZenCashier.Tests
         }
 
         #endregion
-
-        #region
-        
-
-
-        #endregion
     }
 }
