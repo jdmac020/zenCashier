@@ -13,23 +13,6 @@ namespace ZenCashier.Tests
     public class ScanLogTests
     {
 
-        protected IScanLog CreateSeededLog()
-        {
-            var seedList = new List<ScannedItemModel>
-            {
-                new ScannedItemModel {SkuId = SKU_ONE},
-                new ScannedItemModel {SkuId = SKU_ONE},
-                new ScannedItemModel {SkuId = SKU_ONE},
-                new ScannedItemModel {SkuId = SKU_TWO},
-                new ScannedItemModel {SkuId = SKU_TWO}
-            };
-
-            return new ScanLog
-            {
-                ScannedItems = seedList
-            };
-        }
-
         #region LogScan
 
         [Fact]
@@ -90,7 +73,7 @@ namespace ZenCashier.Tests
         [Fact]
         public void GetScansForSku_SkuWithThreeScans_ReturnsThreeRecords()
         {
-            var testClass = CreateSeededLog();
+            var testClass = new ScanLog();
 
             var result = testClass.GetScansForSku(SKU_ONE);
 
@@ -100,7 +83,7 @@ namespace ZenCashier.Tests
         [Fact]
         public void GetScansForSku_SkuWithTwoScans_ReturnsTwoRecords()
         {
-            var testClass = CreateSeededLog();
+            var testClass = new ScanLog();
 
             var result = testClass.GetScansForSku(SKU_TWO);
 
@@ -110,7 +93,7 @@ namespace ZenCashier.Tests
         [Fact]
         public void GetScansForSku_SkuWithZeroScans_ReturnsZero()
         {
-            var testClass = CreateSeededLog();
+            var testClass = new ScanLog();
 
             var result = testClass.GetScansForSku(SKU_THREE);
 

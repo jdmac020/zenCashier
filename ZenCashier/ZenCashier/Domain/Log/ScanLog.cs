@@ -36,14 +36,7 @@ namespace ZenCashier.Domain.Log
         
         public IEnumerable<ScannedItemModel> GetScansForSku(string sku)
         {
-            var returnRecords = Enumerable.Empty<ScannedItemModel>();
-
-            var scans = ScannedItems.Where(item => item.SkuId.Equals(sku));
-
-            if (scans.Any())
-                returnRecords = scans;
-
-            return returnRecords;
+            throw new NotImplementedException();
         }
 
         protected double GetSubTotal()
