@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ZenCashier.Domain.Log;
 using ZenCashier.Exceptions;
 
 namespace ZenCashier.Domain.Order
 {
     public class Order : IOrder
     {
-        public double SubTotal { get { return ScanLog.SubTotal; } }
+        public double SubTotal { get { return Math.Round(_subTotal, 2); } }
 
         public ISkuManager Skus
         {
@@ -25,21 +24,11 @@ namespace ZenCashier.Domain.Order
             set { _skus = value; }
         }
 
+        public Dictionary<string, double> ScanLog { get; set; } = new Dictionary<string, double>();
+
         private ISkuManager _skus;
 
-        public IScanLog ScanLog
-        {
-            get
-            {
-                if (_scanLog is null)
-                    _scanLog = new ScanLog();
-
-                return _scanLog;
-            }
-            set {_scanLog = value; }
-        }
-
-        IScanLog _scanLog;
+        private double _subTotal;
 
         public void ScanItem(string sku)
         {
@@ -76,7 +65,7 @@ namespace ZenCashier.Domain.Order
 
             if (skuSpecial != null && skuSpecial.Amount != -.01)
             {
-                var itemsScanned = ScanLog.GetScansForSku(sku).Count();
+                var itemsScanned = GetScannedQuantity(sku);
                 
                 if (itemsScanned > 0 && itemsScanned % skuSpecial.TriggerQuantity == 0)
                 {
@@ -88,8 +77,38 @@ namespace ZenCashier.Domain.Order
                 }
             }
 
-            ScanLog.LogScan(sku, price, qty);
+            _subTotal += price;
 
+            LogScannedItem(sku, scanQty);
+
+        }
+
+        protected double GetScannedQuantity(string skuId)
+        {
+            var logRecord = ScanLog.Where(record => record.Key == skuId).FirstOrDefault();
+
+            if (string.IsNullOrEmpty(logRecord.Key))
+            {
+                return 0;
+            }
+            else
+            {
+                return logRecord.Value;
+            }
+        }
+
+        protected void LogScannedItem(string skuId, double qty)
+        {
+            var logRecord = ScanLog.Where(record => record.Key == skuId).FirstOrDefault();
+
+            if (string.IsNullOrEmpty(logRecord.Key))
+            {
+                ScanLog.Add(skuId, qty);
+            }
+            else
+            {
+                ScanLog[skuId] += qty;
+            }
         }
 
         protected double GetUnitPrice(string sku)
