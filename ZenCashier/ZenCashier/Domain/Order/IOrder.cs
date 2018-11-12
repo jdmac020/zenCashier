@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ZenCashier.Domain.Order.Models;
 
 namespace ZenCashier.Domain.Order
 {
@@ -12,7 +13,7 @@ namespace ZenCashier.Domain.Order
         
         double SubTotal { get; }
 
-        Dictionary<string, double> ScanLog { get; set; }
+        List<ScannedItemModel> ScanLog { get; set; }
 
         void ScanItem(string sku);
 

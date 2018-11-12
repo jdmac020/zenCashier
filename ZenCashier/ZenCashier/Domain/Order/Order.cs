@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ZenCashier.Domain.Order.Models;
 using ZenCashier.Exceptions;
 
 namespace ZenCashier.Domain.Order
@@ -24,7 +25,7 @@ namespace ZenCashier.Domain.Order
             set { _skus = value; }
         }
 
-        public Dictionary<string, double> ScanLog { get; set; } = new Dictionary<string, double>();
+        public List<ScannedItemModel> ScanLog { get; set; } = new List<ScannedItemModel>();
 
         private ISkuManager _skus;
 
@@ -65,9 +66,10 @@ namespace ZenCashier.Domain.Order
 
             if (skuSpecial != null && skuSpecial.Amount != -.01)
             {
-                var itemsScanned = GetScannedQuantity(sku);
+                var scannedItems = GetScannedItems(sku).Where(item => item.ScannedPrice.Equals(price));
                 
-                if ( (itemsScanned > 0 && itemsScanned % skuSpecial.TriggerQuantity == 0) && (skuSpecial.LimitQuantity == 0 || itemsScanned < skuSpecial.LimitQuantity))
+                if ((scannedItems.Count() > 0 && scannedItems.Count() % skuSpecial.TriggerQuantity == 0) && 
+                    (skuSpecial.LimitQuantity == 0 || scannedItems.Count() < skuSpecial.LimitQuantity))
                 {
 
                     if (skuSpecial.IsPercentOff)
@@ -90,36 +92,32 @@ namespace ZenCashier.Domain.Order
 
             _subTotal += price;
 
-            LogScannedItem(sku, scanQty);
+            LogScannedItem(sku, scanQty, price);
 
         }
 
-        protected double GetScannedQuantity(string skuId)
+        protected IEnumerable<ScannedItemModel> GetScannedItems(string skuId)
         {
-            var logRecord = ScanLog.Where(record => record.Key == skuId).FirstOrDefault();
+            var scannedItems = ScanLog.Where(item => item.SkuId == skuId);
 
-            if (string.IsNullOrEmpty(logRecord.Key))
+            if (scannedItems.Any())
             {
-                return 0;
+                return scannedItems;
             }
             else
             {
-                return logRecord.Value;
+                return Enumerable.Empty<ScannedItemModel>();
             }
         }
 
-        protected void LogScannedItem(string skuId, double qty)
+        protected void LogScannedItem(string skuId, double qty, double price)
         {
-            var logRecord = ScanLog.Where(record => record.Key == skuId).FirstOrDefault();
-
-            if (string.IsNullOrEmpty(logRecord.Key))
+            ScanLog.Add(new ScannedItemModel
             {
-                ScanLog.Add(skuId, qty);
-            }
-            else
-            {
-                ScanLog[skuId] += qty;
-            }
+                SkuId = skuId,
+                ScannedQuantity = qty,
+                ScannedPrice = price
+            });
         }
 
         protected double GetUnitPrice(string sku)

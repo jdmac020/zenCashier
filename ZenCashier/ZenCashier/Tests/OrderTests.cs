@@ -101,7 +101,7 @@ namespace ZenCashier.Tests
 
             testClass.SubTotal.ShouldBe(PRICE_ONE);
             testClass.ScanLog.Count.ShouldBe(1);
-            testClass.ScanLog[SKU_ONE].ShouldBe(1);
+            testClass.ScanLog.Where(scan => scan.SkuId.Equals(SKU_ONE)).Count().ShouldBe(1);
             
         }
 
@@ -129,8 +129,8 @@ namespace ZenCashier.Tests
             }
 
             testClass.SubTotal.ShouldBe(PRICE_ONE * timesToExecute);
-            testClass.ScanLog.Count.ShouldBe(1);
-            testClass.ScanLog[SKU_ONE].ShouldBe(4);
+            testClass.ScanLog.Count.ShouldBe(4);
+            testClass.ScanLog.Where(scan => scan.SkuId.Equals(SKU_ONE)).Count().ShouldBe(4);
         }
 
         [Fact]
@@ -203,8 +203,8 @@ namespace ZenCashier.Tests
 
             testClass.SubTotal.ShouldBe(expectedSubtotal);
             testClass.ScanLog.Count.ShouldBe(2);
-            testClass.ScanLog[SKU_TWO].ShouldBe(WEIGHT_TWO);
-            testClass.ScanLog[SKU_ONE].ShouldBe(WEIGHT_ONE);
+            testClass.ScanLog.Where(scan => scan.SkuId.Equals(SKU_TWO)).FirstOrDefault().ScannedQuantity.ShouldBe(WEIGHT_TWO);
+            testClass.ScanLog.Where(scan => scan.SkuId.Equals(SKU_ONE)).FirstOrDefault().ScannedQuantity.ShouldBe(WEIGHT_ONE);
         }
 
         #endregion
@@ -220,7 +220,7 @@ namespace ZenCashier.Tests
 
             testClass.SubTotal.ShouldBe(PRICE_EACH_MARKDOWN);
             testClass.ScanLog.Count.ShouldBe(1);
-            testClass.ScanLog[SKU_TWO].ShouldBe(1);
+            testClass.ScanLog.Where(scan => scan.SkuId.Equals(SKU_TWO)).Count().ShouldBe(1);
         }
 
         [Fact]
@@ -232,7 +232,7 @@ namespace ZenCashier.Tests
 
             testClass.SubTotal.ShouldBe(PRICE_QTY_MARKDOWN);
             testClass.ScanLog.Count.ShouldBe(1);
-            testClass.ScanLog[SKU_TWO].ShouldBe(WEIGHT_ONE);
+            testClass.ScanLog.Where(scan => scan.SkuId.Equals(SKU_TWO)).FirstOrDefault().ScannedQuantity.ShouldBe(WEIGHT_ONE);
         }
 
         #endregion
@@ -252,8 +252,8 @@ namespace ZenCashier.Tests
             }
 
             testClass.SubTotal.ShouldBe(PRICE_THREE * 3);
-            testClass.ScanLog.Count.ShouldBe(1);
-            testClass.ScanLog[SKU_THREE].ShouldBe(4);
+            testClass.ScanLog.Count.ShouldBe(4);
+            testClass.ScanLog.Where(scan => scan.SkuId.Equals(SKU_THREE)).Count().ShouldBe(4);
         }
 
         [Fact]
@@ -269,8 +269,8 @@ namespace ZenCashier.Tests
             }
 
             testClass.SubTotal.ShouldBe(PRICE_THREE * 2);
-            testClass.ScanLog.Count.ShouldBe(1);
-            testClass.ScanLog[SKU_THREE].ShouldBe(2);
+            testClass.ScanLog.Count.ShouldBe(2);
+            testClass.ScanLog.Where(scan => scan.SkuId.Equals(SKU_THREE)).Count().ShouldBe(2);
         }
 
         [Fact]
@@ -287,8 +287,8 @@ namespace ZenCashier.Tests
             }
 
             testClass.SubTotal.ShouldBe(expectedSubtotal);
-            testClass.ScanLog.Count.ShouldBe(1);
-            testClass.ScanLog[SKU_FOUR].ShouldBe(3);
+            testClass.ScanLog.Count.ShouldBe(3);
+            testClass.ScanLog.Where(scan => scan.SkuId.Equals(SKU_FOUR)).Count().ShouldBe(3);
         }
 
         [Fact]
@@ -304,8 +304,8 @@ namespace ZenCashier.Tests
             }
 
             testClass.SubTotal.ShouldBe(PRICE_TWO * timesToExecute);
-            testClass.ScanLog.Count.ShouldBe(1);
-            testClass.ScanLog[SKU_TWO].ShouldBe(3);
+            testClass.ScanLog.Count.ShouldBe(3);
+            testClass.ScanLog.Where(scan => scan.SkuId.Equals(SKU_TWO)).Count().ShouldBe(3);
         }
 
         #endregion
@@ -325,8 +325,8 @@ namespace ZenCashier.Tests
             }
 
             testClass.SubTotal.ShouldBe(SPECIAL_ONE_PRICE);
-            testClass.ScanLog.Count.ShouldBe(1);
-            testClass.ScanLog[SKU_ONE].ShouldBe(4);
+            testClass.ScanLog.Count.ShouldBe(4);
+            testClass.ScanLog.Where(scan => scan.SkuId.Equals(SKU_ONE)).Count().ShouldBe(4);
         }
 
         [Fact]
@@ -342,8 +342,8 @@ namespace ZenCashier.Tests
             }
 
             testClass.SubTotal.ShouldBe(PRICE_ONE * timesToExecute);
-            testClass.ScanLog.Count.ShouldBe(1);
-            testClass.ScanLog[SKU_ONE].ShouldBe(timesToExecute);
+            testClass.ScanLog.Count.ShouldBe(timesToExecute);
+            testClass.ScanLog.Where(scan => scan.SkuId.Equals(SKU_ONE)).Count().ShouldBe(timesToExecute);
         }
 
         [Fact]
@@ -360,8 +360,8 @@ namespace ZenCashier.Tests
             }
 
             testClass.SubTotal.ShouldBe(expectedPrice);
-            testClass.ScanLog.Count.ShouldBe(1);
-            testClass.ScanLog[SKU_ONE].ShouldBe(timesToExecute);
+            testClass.ScanLog.Count.ShouldBe(timesToExecute);
+            testClass.ScanLog.Where(scan => scan.SkuId.Equals(SKU_ONE)).Count().ShouldBe(timesToExecute);
         }
 
         [Fact]
@@ -380,9 +380,9 @@ namespace ZenCashier.Tests
             testClass.ScanItem(SKU_TWO);
 
             testClass.SubTotal.ShouldBe(expectedPrice);
-            testClass.ScanLog.Count.ShouldBe(2);
-            testClass.ScanLog[SKU_ONE].ShouldBe(timesToExecute);
-            testClass.ScanLog[SKU_TWO].ShouldBe(1);
+            testClass.ScanLog.Count.ShouldBe(5);
+            testClass.ScanLog.Where(scan => scan.SkuId.Equals(SKU_ONE)).Count().ShouldBe(timesToExecute);
+            testClass.ScanLog.Where(scan => scan.SkuId.Equals(SKU_TWO)).Count().ShouldBe(1);
         }
 
         #endregion
@@ -403,8 +403,8 @@ namespace ZenCashier.Tests
             }
 
             testClass.SubTotal.ShouldBe(expectedPrice);
-            testClass.ScanLog.Count.ShouldBe(1);
-            testClass.ScanLog[SKU_ONE].ShouldBe(timesToExecute);
+            testClass.ScanLog.Count.ShouldBe(timesToExecute);
+            testClass.ScanLog.Where(scan => scan.SkuId.Equals(SKU_ONE)).Count().ShouldBe(timesToExecute);
         }
 
         [Fact]
@@ -422,8 +422,8 @@ namespace ZenCashier.Tests
             }
 
             testClass.SubTotal.ShouldBe(expectedPrice);
-            testClass.ScanLog.Count.ShouldBe(1);
-            testClass.ScanLog[SKU_ONE].ShouldBe(timesToExecute);
+            testClass.ScanLog.Count.ShouldBe(timesToExecute);
+            testClass.ScanLog.Where(scan => scan.SkuId.Equals(SKU_ONE)).Count().ShouldBe(timesToExecute);
         }
 
         [Fact]
@@ -440,8 +440,8 @@ namespace ZenCashier.Tests
             }
 
             testClass.SubTotal.ShouldBe(expectedPrice);
-            testClass.ScanLog.Count.ShouldBe(1);
-            testClass.ScanLog[SKU_THREE].ShouldBe(timesToExecute);
+            testClass.ScanLog.Count.ShouldBe(timesToExecute);
+            testClass.ScanLog.Where(scan => scan.SkuId.Equals(SKU_THREE)).Count().ShouldBe(timesToExecute);
         }
 
         [Fact]
@@ -458,8 +458,8 @@ namespace ZenCashier.Tests
             }
 
             testClass.SubTotal.ShouldBe(expectedPrice);
-            testClass.ScanLog.Count.ShouldBe(1);
-            testClass.ScanLog[SKU_THREE].ShouldBe(timesToExecute);
+            testClass.ScanLog.Count.ShouldBe(timesToExecute);
+            testClass.ScanLog.Where(scan => scan.SkuId.Equals(SKU_THREE)).Count().ShouldBe(timesToExecute);
         }
 
         #endregion
