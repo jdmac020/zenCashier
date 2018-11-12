@@ -69,11 +69,22 @@ namespace ZenCashier.Domain.Order
                 
                 if (itemsScanned > 0 && itemsScanned % skuSpecial.TriggerQuantity == 0)
                 {
-                    var discountAsDecimal = skuSpecial.Amount / 100;
 
-                    var discount = price * discountAsDecimal;
+                    if (skuSpecial.IsPercentOff)
+                    {
+                        var discountAsDecimal = skuSpecial.Amount / 100;
 
-                    price = price - discount;
+                        var discount = price * discountAsDecimal;
+
+                        price = price - discount;
+                    }
+                    else
+                    {
+                        var fullPricePaid = itemsScanned * price;
+
+                        price = skuSpecial.Amount - fullPricePaid;
+                    }
+                    
                 }
             }
 
