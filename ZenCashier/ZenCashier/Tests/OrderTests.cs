@@ -24,7 +24,8 @@ namespace ZenCashier.Tests
             {
                 Amount = SPECIAL_ONE_PRICE,
                 TriggerQuantity = 3,
-                IsPercentOff = false
+                IsPercentOff = false,
+                LimitQuantity = 8
             });
 
             mockSkuApi.GetPrice(SKU_TWO).Returns(PRICE_TWO);
@@ -34,7 +35,8 @@ namespace ZenCashier.Tests
             {
                 Amount = SPECIAL_BOGO_FREE,
                 TriggerQuantity = 3,
-                IsPercentOff = true
+                IsPercentOff = true,
+                LimitQuantity = 12
             });
 
             mockSkuApi.GetPrice(SKU_FOUR).Returns(PRICE_FOUR);
@@ -381,6 +383,83 @@ namespace ZenCashier.Tests
             testClass.ScanLog.Count.ShouldBe(2);
             testClass.ScanLog[SKU_ONE].ShouldBe(timesToExecute);
             testClass.ScanLog[SKU_TWO].ShouldBe(1);
+        }
+
+        #endregion
+
+        #region Limit Specials
+
+        [Fact]
+        public void ScanItem_SpecialLimit8Scan8_SubTotalEquals2xSpecialPrice()
+        {
+            var testClass = CreateOrder_MockSkuApi_Specials();
+            var expectedPrice = (SPECIAL_ONE_PRICE * 2);
+
+            var timesToExecute = 8;
+
+            for (int i = 0; i < timesToExecute; i++)
+            {
+                testClass.ScanItem(SKU_ONE);
+            }
+
+            testClass.SubTotal.ShouldBe(expectedPrice);
+            testClass.ScanLog.Count.ShouldBe(1);
+            testClass.ScanLog[SKU_ONE].ShouldBe(timesToExecute);
+        }
+
+        [Fact]
+        public void ScanItem_SpecialLimit8Scan12_SubTotalEquals2xSpecialPricePlus4xRegular()
+        
+        {
+            var testClass = CreateOrder_MockSkuApi_Specials();
+            var expectedPrice = (SPECIAL_ONE_PRICE * 2) + (PRICE_ONE * 4);
+
+            var timesToExecute = 12;
+
+            for (int i = 0; i < timesToExecute; i++)
+            {
+                testClass.ScanItem(SKU_ONE);
+            }
+
+            testClass.SubTotal.ShouldBe(expectedPrice);
+            testClass.ScanLog.Count.ShouldBe(1);
+            testClass.ScanLog[SKU_ONE].ShouldBe(timesToExecute);
+        }
+
+        [Fact]
+        public void ScanItem_BogoSpecialLimit12Scan12_SubTotalEquals8xRegularPrice()
+        {
+            var testClass = CreateOrder_MockSkuApi_Specials();
+            var expectedPrice = PRICE_THREE * 8;
+
+            var timesToExecute = 12;
+
+            for (int i = 0; i < timesToExecute; i++)
+            {
+                testClass.ScanItem(SKU_THREE);
+            }
+
+            testClass.SubTotal.ShouldBe(expectedPrice);
+            testClass.ScanLog.Count.ShouldBe(1);
+            testClass.ScanLog[SKU_THREE].ShouldBe(timesToExecute);
+        }
+
+        [Fact]
+        public void ScanItem_BogoSpecialLimit12Scan16_SubTotalEquals12xRegularPrice()
+        {
+            var testClass = CreateOrder_MockSkuApi_Specials();
+            var expectedPrice = PRICE_THREE * 12;
+
+            var timesToExecute = 14;
+
+            for (int i = 0; i < timesToExecute; i++)
+            {
+                testClass.ScanItem(SKU_THREE);
+            }
+
+            testClass.SubTotal.ShouldBe(expectedPrice);
+            testClass.ScanLog.Count.ShouldBe(1);
+            testClass.ScanLog[SKU_THREE].ShouldBe(timesToExecute);
         }
 
         #endregion
