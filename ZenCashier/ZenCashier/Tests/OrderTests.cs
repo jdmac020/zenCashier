@@ -445,10 +445,10 @@ namespace ZenCashier.Tests
         }
 
         [Fact]
-        public void ScanItem_BogoSpecialLimit12Scan16_SubTotalEquals12xRegularPrice()
+        public void ScanItem_BogoSpecialLimit12Scan14_SubTotalEquals12xRegularPrice()
         {
             var testClass = CreateOrder_MockSkuApi_Specials();
-            var expectedPrice = PRICE_THREE * 12;
+            var expectedPrice = PRICE_THREE * 11;
 
             var timesToExecute = 14;
 
