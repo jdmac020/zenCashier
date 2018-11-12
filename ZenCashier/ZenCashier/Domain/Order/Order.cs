@@ -67,7 +67,7 @@ namespace ZenCashier.Domain.Order
             {
                 var itemsScanned = GetScannedQuantity(sku);
                 
-                if (itemsScanned > 0 && itemsScanned % skuSpecial.TriggerQuantity == 0)
+                if (itemsScanned > 0 && itemsScanned % skuSpecial.TriggerQuantity == 0 && itemsScanned < skuSpecial.LimitQuantity)
                 {
 
                     if (skuSpecial.IsPercentOff)
@@ -80,7 +80,7 @@ namespace ZenCashier.Domain.Order
                     }
                     else
                     {
-                        var fullPricePaid = itemsScanned * price;
+                        var fullPricePaid = skuSpecial.TriggerQuantity * price;
 
                         price = skuSpecial.Amount - fullPricePaid;
                     }
