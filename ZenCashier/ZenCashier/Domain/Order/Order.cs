@@ -55,7 +55,7 @@ namespace ZenCashier.Domain.Order
         {
             var price = GetUnitPrice(sku);
             double scanQty = 1;
-            
+
             if (double.IsNaN(qty).Equals(false))
             {
                 scanQty = qty;
@@ -66,43 +66,48 @@ namespace ZenCashier.Domain.Order
 
             if (skuSpecial != null && skuSpecial.Amount != -.01)
             {
-                var scannedItems = GetScannedItems(sku);
-                var scannedItemsFullPrice = GetScannedItems(sku).Where(item => item.ScannedPrice.Equals(price));
 
-                if (skuSpecial.IsPercentOff)
+                var scannedItems = GetScannedItems(sku).Count();
+                var scannedItemsFullPrice = GetScannedItems(sku).Where(item => item.ScannedPrice.Equals(price)).Count();
+
+                if (scannedItems > 0 && (skuSpecial.LimitQuantity == 0 || scannedItems <= skuSpecial.LimitQuantity))
                 {
-                    // if scanned full price == trigger quantity, do discount
-
-                    // PROBLEM: this does not advance count of items forward, meaning all subsequent scans get discounted
-
-                    // SOLUTION(?): check that # of scanned items relates to the discount given (eg IF totalItems / triggerQty == 1 AND totalItems - fullPriceItems == 1 THEN normal price
-                }
-                
-                
-                if ((scannedItems.Count() > 0 && scannedItems.Count() % skuSpecial.TriggerQuantity == 0) && 
-                    (skuSpecial.LimitQuantity == 0 || scannedItems.Count() < skuSpecial.LimitQuantity))
-                {
-
                     if (skuSpecial.IsPercentOff)
                     {
 
-                        // PROBLEM: When using full scan to calculate when to trigger special pricing, is counting previous discounts and throwing off count
+                        if (scannedItemsFullPrice % skuSpecial.TriggerQuantity == 0 && scannedItemsFullPrice / skuSpecial.TriggerQuantity != scannedItems - scannedItemsFullPrice)
+                        {
+                            var discountAsDecimal = skuSpecial.Amount / 100;
 
-                        var discountAsDecimal = skuSpecial.Amount / 100;
+                            var discount = price * discountAsDecimal;
 
-                        var discount = price * discountAsDecimal;
-
-                        price = price - discount;
+                            price = price - discount;
+                        }
 
                     }
                     else
                     {
-                        var fullPricePaid = skuSpecial.TriggerQuantity * price;
 
-                        price = skuSpecial.Amount - fullPricePaid;
+                        if (scannedItems % skuSpecial.TriggerQuantity == 0)
+                        {
+                            var fullPricePaid = skuSpecial.TriggerQuantity * price;
+
+                            price = skuSpecial.Amount - fullPricePaid;
+                        }
+
                     }
-                    
                 }
+
+                
+
+                // if scanned full price == trigger quantity, do discount
+
+                // PROBLEM: this does not advance count of items forward, meaning all subsequent scans get discounted
+
+                // SOLUTION(?): check that # of scanned items relates to the discount given (eg IF totalItems / triggerQty == 1 AND totalItems - fullPriceItems == 1 THEN normal price
+
+
+
             }
 
             _subTotal += price;
