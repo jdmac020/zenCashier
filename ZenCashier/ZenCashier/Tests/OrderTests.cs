@@ -20,7 +20,7 @@ namespace ZenCashier.Tests
         {
             var mockSkuApi = Substitute.For<ISkuManager>();
             mockSkuApi.GetPrice(SKU_ONE).Returns(PRICE_ONE);
-            mockSkuApi.GetSpecial(SKU_TWO).Returns(new Domain.Skus.Models.SpecialInfoModel
+            mockSkuApi.GetSpecial(SKU_ONE).Returns(new Domain.Skus.Models.SpecialInfoModel
             {
                 Amount = SPECIAL_ONE_PRICE,
                 TriggerQuantity = 3,
