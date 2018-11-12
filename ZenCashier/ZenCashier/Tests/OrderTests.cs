@@ -29,6 +29,13 @@ namespace ZenCashier.Tests
             });
 
             mockSkuApi.GetPrice(SKU_TWO).Returns(PRICE_TWO);
+            mockSkuApi.GetSpecial(SKU_TWO).Returns(new Domain.Skus.Models.SpecialInfoModel
+            {
+                Amount = SPECIAL_BOGO_FREE,
+                TriggerQuantity = 2,
+                IsPercentOff = true,
+                LimitQuantity = 6
+            });
 
             mockSkuApi.GetPrice(SKU_THREE).Returns(PRICE_THREE);
             mockSkuApi.GetSpecial(SKU_THREE).Returns(new Domain.Skus.Models.SpecialInfoModel
@@ -294,7 +301,7 @@ namespace ZenCashier.Tests
         [Fact]
         public void ScanItem_BuyThreeNoSpecial_SubtotalEqualsPrice3x()
         {
-            var testClass = CreateOrder_MockSkuApi_Specials();
+            var testClass = CreateOrder_MockSkuApi_PriceOnly();
 
             var timesToExecute = 3;
 
@@ -427,7 +434,7 @@ namespace ZenCashier.Tests
         }
 
         [Fact]
-        public void ScanItem_BogoSpecialLimit12Scan12_SubTotalEquals8xRegularPrice()
+        public void ScanItem_BogoSpecialLimit12Scan12_SubTotalEquals9xRegularPrice()
         {
             var testClass = CreateOrder_MockSkuApi_Specials();
             var expectedPrice = PRICE_THREE * 9;
@@ -442,6 +449,24 @@ namespace ZenCashier.Tests
             testClass.SubTotal.ShouldBe(expectedPrice);
             testClass.ScanLog.Count.ShouldBe(timesToExecute);
             testClass.ScanLog.Where(scan => scan.SkuId.Equals(SKU_THREE)).Count().ShouldBe(timesToExecute);
+        }
+
+        [Fact]
+        public void ScanItem_BogoSpecialLimit6Scan8_SubTotalEquals9xRegularPrice()
+        {
+            var testClass = CreateOrder_MockSkuApi_Specials();
+            var expectedPrice = PRICE_TWO * 7;
+
+            var timesToExecute = 9;
+
+            for (int i = 0; i < timesToExecute; i++)
+            {
+                testClass.ScanItem(SKU_TWO);
+            }
+
+            testClass.SubTotal.ShouldBe(expectedPrice);
+            testClass.ScanLog.Count.ShouldBe(timesToExecute);
+            testClass.ScanLog.Where(scan => scan.SkuId.Equals(SKU_TWO)).Count().ShouldBe(timesToExecute);
         }
 
         [Fact]
