@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ZenCashier.Domain.Order.Models;
+using ZenCashier.Domain.Skus.Models;
 using ZenCashier.Exceptions;
 
 namespace ZenCashier.Domain.Order
@@ -24,7 +26,7 @@ namespace ZenCashier.Domain.Order
             set { _skus = value; }
         }
 
-        public Dictionary<string, double> ScanLog { get; set; } = new Dictionary<string, double>();
+        public List<ScannedItemModel> ScanLog { get; set; } = new List<ScannedItemModel>();
 
         private ISkuManager _skus;
 
@@ -54,7 +56,7 @@ namespace ZenCashier.Domain.Order
         {
             var price = GetUnitPrice(sku);
             double scanQty = 1;
-            
+
             if (double.IsNaN(qty).Equals(false))
             {
                 scanQty = qty;
@@ -65,61 +67,74 @@ namespace ZenCashier.Domain.Order
 
             if (skuSpecial != null && skuSpecial.Amount != -.01)
             {
-                var itemsScanned = GetScannedQuantity(sku);
-                
-                if (itemsScanned > 0 && itemsScanned % skuSpecial.TriggerQuantity == 0)
+                price = ProcessForEachSpecial(price, sku, skuSpecial);
+            }
+
+            _subTotal += price;
+
+            LogScannedItem(sku, scanQty, price);
+
+        }
+
+        protected double ProcessForEachSpecial(double price, string sku, SpecialInfoModel skuSpecial)
+        {
+            var scannedItems = GetScannedItems(sku).Count();
+            var scannedItemsFullPrice = GetScannedItems(sku).Where(item => item.ScannedPrice.Equals(price)).Count();
+
+            if (scannedItems > 0 && (skuSpecial.LimitQuantity == 0 || scannedItems <= skuSpecial.LimitQuantity))
+            {
+                if (skuSpecial.IsPercentOff)
                 {
 
-                    if (skuSpecial.IsPercentOff)
+                    if (scannedItemsFullPrice % skuSpecial.TriggerQuantity == 0 && 
+                        (scannedItemsFullPrice / skuSpecial.TriggerQuantity) != (scannedItems - scannedItemsFullPrice))
                     {
                         var discountAsDecimal = skuSpecial.Amount / 100;
 
                         var discount = price * discountAsDecimal;
 
-                        price = price - discount;
+                        return price - discount;
                     }
-                    else
-                    {
-                        var fullPricePaid = itemsScanned * price;
 
-                        price = skuSpecial.Amount - fullPricePaid;
+                }
+                else
+                {
+
+                    if (scannedItems % skuSpecial.TriggerQuantity == 0)
+                    {
+                        var fullPricePaid = skuSpecial.TriggerQuantity * price;
+
+                        return skuSpecial.Amount - fullPricePaid;
                     }
-                    
+
                 }
             }
 
-            _subTotal += price;
-
-            LogScannedItem(sku, scanQty);
-
+            return price;
         }
 
-        protected double GetScannedQuantity(string skuId)
+        protected IEnumerable<ScannedItemModel> GetScannedItems(string skuId)
         {
-            var logRecord = ScanLog.Where(record => record.Key == skuId).FirstOrDefault();
+            var scannedItems = ScanLog.Where(item => item.SkuId == skuId);
 
-            if (string.IsNullOrEmpty(logRecord.Key))
+            if (scannedItems.Any())
             {
-                return 0;
+                return scannedItems;
             }
             else
             {
-                return logRecord.Value;
+                return Enumerable.Empty<ScannedItemModel>();
             }
         }
 
-        protected void LogScannedItem(string skuId, double qty)
+        protected void LogScannedItem(string skuId, double qty, double price)
         {
-            var logRecord = ScanLog.Where(record => record.Key == skuId).FirstOrDefault();
-
-            if (string.IsNullOrEmpty(logRecord.Key))
+            ScanLog.Add(new ScannedItemModel
             {
-                ScanLog.Add(skuId, qty);
-            }
-            else
-            {
-                ScanLog[skuId] += qty;
-            }
+                SkuId = skuId,
+                ScannedQuantity = qty,
+                ScannedPrice = price
+            });
         }
 
         protected double GetUnitPrice(string sku)

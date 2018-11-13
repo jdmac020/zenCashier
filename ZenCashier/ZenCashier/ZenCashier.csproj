@@ -71,6 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Domain\Order\IOrder.cs" />
+    <Compile Include="Domain\Order\Models\ScannedItemModel.cs" />
     <Compile Include="Domain\Order\Order.cs" />
     <Compile Include="Domain\Skus\Models\SpecialInfoModel.cs" />
     <Compile Include="Domain\Skus\SkuManager.cs" />
