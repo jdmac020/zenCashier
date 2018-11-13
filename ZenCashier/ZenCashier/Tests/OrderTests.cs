@@ -9,12 +9,53 @@ using ZenCashier.Domain.Order;
 using static ZenCashier.Tests.TestValues;
 using ZenCashier.Exceptions;
 using NSubstitute;
+using ZenCashier.Domain.Order.Models;
 
 namespace ZenCashier.Tests
 {
     public class OrderTests
     {
         #region Factory
+        
+        protected List<ScannedItemModel> Create_ScannedItems_ThreeSingleSkuThrees()
+        {
+            return new List<ScannedItemModel>
+            {
+                new ScannedItemModel { SkuId = SKU_THREE, ScannedPrice = PRICE_THREE, ScannedQuantity = 1 },
+                new ScannedItemModel { SkuId = SKU_THREE, ScannedPrice = PRICE_THREE, ScannedQuantity = 1 },
+                new ScannedItemModel { SkuId = SKU_THREE, ScannedPrice = PRICE_THREE, ScannedQuantity = 1 }
+            };
+        }
+
+        protected List<ScannedItemModel> Create_ScannedItems_ThreeWeightedSkuThrees()
+        {
+            return new List<ScannedItemModel>
+            {
+                new ScannedItemModel { SkuId = SKU_THREE, ScannedPrice = PRICE_THREE, ScannedQuantity = 2.25 },
+                new ScannedItemModel { SkuId = SKU_THREE, ScannedPrice = PRICE_THREE, ScannedQuantity = 2.09 },
+                new ScannedItemModel { SkuId = SKU_THREE, ScannedPrice = PRICE_THREE, ScannedQuantity = 1.98 }
+            };
+        }
+
+        protected List<ScannedItemModel> Create_ScannedItems_ThreeSingleSkuOne_ForGetXforY()
+        {
+            return new List<ScannedItemModel>
+            {
+                new ScannedItemModel { SkuId = SKU_ONE, ScannedPrice = PRICE_ONE, ScannedQuantity = 1 },
+                new ScannedItemModel { SkuId = SKU_ONE, ScannedPrice = PRICE_ONE, ScannedQuantity = 1 },
+                new ScannedItemModel { SkuId = SKU_ONE, ScannedPrice = PRICE_ONE, ScannedQuantity = 1 }
+            };
+        }
+
+        protected List<ScannedItemModel> Create_ScannedItems_ThreeSingleSkuTwo_ForBogo()
+        {
+            return new List<ScannedItemModel>
+            {
+                new ScannedItemModel { SkuId = SKU_TWO, ScannedPrice = PRICE_TWO, ScannedQuantity = 1 },
+                new ScannedItemModel { SkuId = SKU_TWO, ScannedPrice = PRICE_TWO, ScannedQuantity = 1 },
+                new ScannedItemModel { SkuId = SKU_TWO, ScannedPrice = PRICE_TWO, ScannedQuantity = 1 }
+            };
+        }
 
         protected IOrder CreateOrder_MockSkuApi_Specials()
         {
@@ -109,7 +150,7 @@ namespace ZenCashier.Tests
             testClass.SubTotal.ShouldBe(PRICE_ONE);
             testClass.ScanLog.Count.ShouldBe(1);
             testClass.ScanLog.Where(scan => scan.SkuId.Equals(SKU_ONE)).Count().ShouldBe(1);
-            
+
         }
 
         [Fact]
@@ -155,14 +196,14 @@ namespace ZenCashier.Tests
         #endregion
 
         #region Scan simple price With Weight
-        
+
         [Fact]
         public void ScanItem_ValidSkuAndWeight_SubtotalEqualsPriceTimesWeight()
         {
             var testClass = CreateOrder_MockSkuApi_PriceOnly();
 
             testClass.ScanItem(SKU_ONE, WEIGHT_ONE);
-            
+
             testClass.SubTotal.ShouldBe(1.78);
             testClass.ScanLog.Count.ShouldBe(1);
         }
@@ -284,7 +325,7 @@ namespace ZenCashier.Tests
         public void ScanItem_BuyTwoGetOneHalfOff_SubtotalEquals2fullPriceOneHalf()
         {
             var testClass = CreateOrder_MockSkuApi_Specials();
-            var expectedSubtotal = Math.Round((PRICE_FOUR * 2) + (PRICE_FOUR * .5),2);
+            var expectedSubtotal = Math.Round((PRICE_FOUR * 2) + (PRICE_FOUR * .5), 2);
 
             var timesToExecute = 3;
 
@@ -416,7 +457,7 @@ namespace ZenCashier.Tests
 
         [Fact]
         public void ScanItem_SpecialLimit8Scan12_SubTotalEquals2xSpecialPricePlus4xRegular()
-        
+
         {
             var testClass = CreateOrder_MockSkuApi_Specials();
             var expectedPrice = (SPECIAL_ONE_PRICE * 2) + (PRICE_ONE * 4);
@@ -494,7 +535,7 @@ namespace ZenCashier.Tests
         [Fact]
         public void RemoveItem_ValidEachSku_SubtotalEqualsMinusSkuPrice()
         {
-            
+
         }
 
         [Fact]
