@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ZenCashier.Domain.Order.Models;
+using ZenCashier.Domain.Skus.Models;
 using ZenCashier.Exceptions;
 
 namespace ZenCashier.Domain.Order
@@ -66,54 +67,50 @@ namespace ZenCashier.Domain.Order
 
             if (skuSpecial != null && skuSpecial.Amount != -.01)
             {
-
-                var scannedItems = GetScannedItems(sku).Count();
-                var scannedItemsFullPrice = GetScannedItems(sku).Where(item => item.ScannedPrice.Equals(price)).Count();
-
-                if (scannedItems > 0 && (skuSpecial.LimitQuantity == 0 || scannedItems <= skuSpecial.LimitQuantity))
-                {
-                    if (skuSpecial.IsPercentOff)
-                    {
-
-                        if (scannedItemsFullPrice % skuSpecial.TriggerQuantity == 0 && scannedItemsFullPrice / skuSpecial.TriggerQuantity != scannedItems - scannedItemsFullPrice)
-                        {
-                            var discountAsDecimal = skuSpecial.Amount / 100;
-
-                            var discount = price * discountAsDecimal;
-
-                            price = price - discount;
-                        }
-
-                    }
-                    else
-                    {
-
-                        if (scannedItems % skuSpecial.TriggerQuantity == 0)
-                        {
-                            var fullPricePaid = skuSpecial.TriggerQuantity * price;
-
-                            price = skuSpecial.Amount - fullPricePaid;
-                        }
-
-                    }
-                }
-
-                
-
-                // if scanned full price == trigger quantity, do discount
-
-                // PROBLEM: this does not advance count of items forward, meaning all subsequent scans get discounted
-
-                // SOLUTION(?): check that # of scanned items relates to the discount given (eg IF totalItems / triggerQty == 1 AND totalItems - fullPriceItems == 1 THEN normal price
-
-
-
+                price = ProcessForEachSpecial(price, sku, skuSpecial);
             }
 
             _subTotal += price;
 
             LogScannedItem(sku, scanQty, price);
 
+        }
+
+        protected double ProcessForEachSpecial(double price, string sku, SpecialInfoModel skuSpecial)
+        {
+            var scannedItems = GetScannedItems(sku).Count();
+            var scannedItemsFullPrice = GetScannedItems(sku).Where(item => item.ScannedPrice.Equals(price)).Count();
+
+            if (scannedItems > 0 && (skuSpecial.LimitQuantity == 0 || scannedItems <= skuSpecial.LimitQuantity))
+            {
+                if (skuSpecial.IsPercentOff)
+                {
+
+                    if (scannedItemsFullPrice % skuSpecial.TriggerQuantity == 0 && 
+                        (scannedItemsFullPrice / skuSpecial.TriggerQuantity) != (scannedItems - scannedItemsFullPrice))
+                    {
+                        var discountAsDecimal = skuSpecial.Amount / 100;
+
+                        var discount = price * discountAsDecimal;
+
+                        return price - discount;
+                    }
+
+                }
+                else
+                {
+
+                    if (scannedItems % skuSpecial.TriggerQuantity == 0)
+                    {
+                        var fullPricePaid = skuSpecial.TriggerQuantity * price;
+
+                        return skuSpecial.Amount - fullPricePaid;
+                    }
+
+                }
+            }
+
+            return price;
         }
 
         protected IEnumerable<ScannedItemModel> GetScannedItems(string skuId)
