@@ -488,5 +488,57 @@ namespace ZenCashier.Tests
         }
 
         #endregion
+
+        #region Remove Scan
+
+        [Fact]
+        public void RemoveItem_ValidEachSku_SubtotalEqualsMinusSkuPrice()
+        {
+            
+        }
+
+        [Fact]
+        public void RemoveItem_EmptyIdEachSku_SubtotalDoesNotChange()
+        {
+
+        }
+
+        [Fact]
+        public void RemoveItem_NotScannedEachSku_SubtotalDoesNotChange()
+        {
+
+        }
+
+        [Fact]
+        public void RemoveItem_ValidQuantitySku_SubtotalEqualsMinusSalePrice()
+        {
+
+        }
+
+        [Fact]
+        public void RemoveItem_NoWeightQuantitySku_ThrowsException()
+        {
+
+        }
+
+        [Fact]
+        public void RemoveItem_EmptyStringQuantitySku_SubtotalDoesNotChange()
+        {
+
+        }
+
+        [Fact]
+        public void RemoveItem_InvalidatesXforYSpecial_SubtotalEqualsSumOfPrices()
+        {
+
+        }
+
+        [Fact]
+        public void RemoveItem_InvalidatesBuy3Get1Free_SubtotalDoesNotChange()
+        {
+
+        }
+
+        #endregion
     }
 }
