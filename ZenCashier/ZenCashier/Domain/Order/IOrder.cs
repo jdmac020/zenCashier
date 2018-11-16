@@ -11,12 +11,16 @@ namespace ZenCashier.Domain.Order
     {
         ISkuManager Skus { get; set; }
         
-        double SubTotal { get; }
+        double SubTotal { get; set; }
 
         List<ScannedItemModel> ScanLog { get; set; }
 
         void ScanItem(string sku);
 
         void ScanItem(string sku, double qty);
+
+        void RemoveItem(string sku);
+
+        void RemoveItem(string sku, double qty);
     }
 }

@@ -11,7 +11,14 @@ namespace ZenCashier.Domain.Order
 {
     public class Order : IOrder
     {
-        public double SubTotal { get { return Math.Round(_subTotal, 2); } }
+        public double SubTotal
+        {
+            get { return Math.Round(_subTotal, 2); }
+
+            set { if (_subTotal == 0)
+                    _subTotal = value;
+            }
+        }
 
         public ISkuManager Skus
         {
@@ -163,6 +170,16 @@ namespace ZenCashier.Domain.Order
             }
 
             return isValid;
+        }
+
+        public void RemoveItem(string sku)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveItem(string sku, double qty)
+        {
+            throw new NotImplementedException();
         }
     }
 }

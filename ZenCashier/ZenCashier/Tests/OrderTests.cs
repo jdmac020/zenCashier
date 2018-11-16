@@ -535,49 +535,116 @@ namespace ZenCashier.Tests
         [Fact]
         public void RemoveItem_ValidEachSku_SubtotalEqualsMinusSkuPrice()
         {
+            var testClass = CreateOrder_MockSkuApi_PriceOnly();
+            testClass.ScanLog = Create_ScannedItems_ThreeSingleSkuThrees();
+            testClass.SubTotal = PRICE_THREE * 3;
+
+            var expectedPrice = PRICE_THREE * 2;
+
+            testClass.RemoveItem(SKU_THREE);
+
+            testClass.ScanLog.Count.ShouldBe(2);
+            testClass.SubTotal.ShouldBe(expectedPrice);
 
         }
 
         [Fact]
         public void RemoveItem_EmptyIdEachSku_SubtotalDoesNotChange()
         {
+            var testClass = CreateOrder_MockSkuApi_PriceOnly();
+            testClass.ScanLog = Create_ScannedItems_ThreeSingleSkuThrees();
 
+            var expectedPrice = PRICE_THREE * 3;
+            testClass.SubTotal = expectedPrice;
+
+            testClass.RemoveItem(string.Empty);
+
+            testClass.ScanLog.Count.ShouldBe(3);
+            testClass.SubTotal.ShouldBe(expectedPrice);
         }
 
         [Fact]
         public void RemoveItem_NotScannedEachSku_SubtotalDoesNotChange()
         {
+            var testClass = CreateOrder_MockSkuApi_PriceOnly();
+            testClass.ScanLog = Create_ScannedItems_ThreeSingleSkuThrees();
 
+            var expectedPrice = PRICE_THREE * 3;
+            testClass.SubTotal = expectedPrice;
+
+            testClass.RemoveItem(string.Empty);
+
+            testClass.ScanLog.Count.ShouldBe(3);
+            testClass.SubTotal.ShouldBe(expectedPrice);
         }
 
         [Fact]
         public void RemoveItem_ValidQuantitySku_SubtotalEqualsMinusSalePrice()
         {
+            var testClass = CreateOrder_MockSkuApi_PriceOnly();
+            testClass.ScanLog = Create_ScannedItems_ThreeWeightedSkuThrees();
+            testClass.SubTotal = (PRICE_THREE * WEIGHT_ONE) + (PRICE_THREE * WEIGHT_TWO) + (PRICE_THREE * WEIGHT_THREE);
 
+            var expectedPrice = (PRICE_THREE * WEIGHT_ONE) + (PRICE_THREE * WEIGHT_TWO);
+
+            testClass.RemoveItem(SKU_THREE, WEIGHT_THREE);
+
+            testClass.ScanLog.Count.ShouldBe(2);
+            testClass.SubTotal.ShouldBe(expectedPrice);
         }
 
         [Fact]
-        public void RemoveItem_NoWeightQuantitySku_ThrowsException()
+        public void RemoveItem_NegativeWeightQuantitySku_ThrowsException()
         {
+            var testClass = CreateOrder_MockSkuApi_PriceOnly();
+            testClass.ScanLog = Create_ScannedItems_ThreeWeightedSkuThrees();
 
+            Should.Throw<InvalidWeightException>(() => testClass.RemoveItem(SKU_THREE, WEIGHT_NEGATIVE));
         }
 
         [Fact]
         public void RemoveItem_EmptyStringQuantitySku_SubtotalDoesNotChange()
         {
+            var testClass = CreateOrder_MockSkuApi_PriceOnly();
+            testClass.ScanLog = Create_ScannedItems_ThreeWeightedSkuThrees();
 
+            var expectedPrice = (PRICE_THREE * WEIGHT_ONE) + (PRICE_THREE * WEIGHT_TWO) + (PRICE_THREE * WEIGHT_THREE);
+            testClass.SubTotal = expectedPrice;
+
+            testClass.RemoveItem(string.Empty, WEIGHT_THREE);
+
+            testClass.ScanLog.Count.ShouldBe(3);
+            testClass.SubTotal.ShouldBe(expectedPrice);
         }
 
         [Fact]
         public void RemoveItem_InvalidatesXforYSpecial_SubtotalEqualsSumOfPrices()
         {
+            var testClass = CreateOrder_MockSkuApi_Specials();
+            testClass.ScanLog = Create_ScannedItems_ThreeSingleSkuOne_ForGetXforY();
 
+            var expectedPrice = (PRICE_ONE * 2);
+            testClass.SubTotal = SPECIAL_ONE_PRICE;
+
+            testClass.RemoveItem(SKU_ONE);
+
+            testClass.ScanLog.Count.ShouldBe(2);
+            testClass.SubTotal.ShouldBe(expectedPrice);
         }
 
         [Fact]
-        public void RemoveItem_InvalidatesBuy3Get1Free_SubtotalDoesNotChange()
+        public void RemoveItem_InvalidatesBuy2Get1Free_SubtotalDoesNotChange()
         {
+            var testClass = CreateOrder_MockSkuApi_Specials();
+            testClass.ScanLog = Create_ScannedItems_ThreeSingleSkuTwo_ForBogo();
 
+            var expectedPrice = (PRICE_TWO * 2);
+            testClass.SubTotal = expectedPrice;
+
+            testClass.RemoveItem(SKU_ONE);
+
+            testClass.ScanLog.Count.ShouldBe(2);
+            testClass.SubTotal.ShouldBe(expectedPrice);
         }
 
         #endregion
