@@ -97,12 +97,14 @@ namespace ZenCashier.Domain.Order
 
             var loggedItem = GetScannedItems(sku, qty).LastOrDefault();
 
-            var amountToDebit = loggedItem.ScannedPrice * scannedQty;
+            if (loggedItem != null)
+            {
+                var amountToDebit = loggedItem.ScannedPrice * scannedQty;
 
-            _subTotal -= amountToDebit;
+                _subTotal -= amountToDebit;
 
-            ScanLog.Remove(loggedItem);
-            
+                ScanLog.Remove(loggedItem);
+            }
         }
 
         protected double SetQuantity(double qty)
