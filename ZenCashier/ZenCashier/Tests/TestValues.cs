@@ -14,9 +14,10 @@ namespace ZenCashier.Tests
         public const string SKU_FOUR = "frozen pizza";
 
         public const double WEIGHT_ONE = 2.25;
-        public const double WEIGHT_TWO = 1;
+        public const double WEIGHT_TWO = 2.09;
+        public const double WEIGHT_THREE = 1.98;
         public const double WEIGHT_ZERO = 0;
-        public const double WEIGHT_NEGATIVE = -1.5;
+        public const double WEIGHT_NEGATIVE = -1.98;
         
         public const double PRICE_ONE = .79;
         public const double PRICE_TWO = 3;

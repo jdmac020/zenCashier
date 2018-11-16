@@ -9,12 +9,53 @@ using ZenCashier.Domain.Order;
 using static ZenCashier.Tests.TestValues;
 using ZenCashier.Exceptions;
 using NSubstitute;
+using ZenCashier.Domain.Order.Models;
 
 namespace ZenCashier.Tests
 {
     public class OrderTests
     {
         #region Factory
+        
+        protected List<ScannedItemModel> Create_ScannedItems_ThreeSingleSkuThrees()
+        {
+            return new List<ScannedItemModel>
+            {
+                new ScannedItemModel { SkuId = SKU_THREE, ScannedPrice = PRICE_THREE, ScannedQuantity = 1 },
+                new ScannedItemModel { SkuId = SKU_THREE, ScannedPrice = PRICE_THREE, ScannedQuantity = 1 },
+                new ScannedItemModel { SkuId = SKU_THREE, ScannedPrice = PRICE_THREE, ScannedQuantity = 1 }
+            };
+        }
+
+        protected List<ScannedItemModel> Create_ScannedItems_ThreeWeightedSkuThrees()
+        {
+            return new List<ScannedItemModel>
+            {
+                new ScannedItemModel { SkuId = SKU_THREE, ScannedPrice = PRICE_THREE, ScannedQuantity = 2.25 },
+                new ScannedItemModel { SkuId = SKU_THREE, ScannedPrice = PRICE_THREE, ScannedQuantity = 2.09 },
+                new ScannedItemModel { SkuId = SKU_THREE, ScannedPrice = PRICE_THREE, ScannedQuantity = 1.98 }
+            };
+        }
+
+        protected List<ScannedItemModel> Create_ScannedItems_ThreeSingleSkuOne_ForGetXforY()
+        {
+            return new List<ScannedItemModel>
+            {
+                new ScannedItemModel { SkuId = SKU_ONE, ScannedPrice = PRICE_ONE, ScannedQuantity = 1 },
+                new ScannedItemModel { SkuId = SKU_ONE, ScannedPrice = PRICE_ONE, ScannedQuantity = 1 },
+                new ScannedItemModel { SkuId = SKU_ONE, ScannedPrice = .92, ScannedQuantity = 1 }
+            };
+        }
+
+        protected List<ScannedItemModel> Create_ScannedItems_ThreeSingleSkuTwo_ForBogo()
+        {
+            return new List<ScannedItemModel>
+            {
+                new ScannedItemModel { SkuId = SKU_TWO, ScannedPrice = PRICE_TWO, ScannedQuantity = 1 },
+                new ScannedItemModel { SkuId = SKU_TWO, ScannedPrice = PRICE_TWO, ScannedQuantity = 1 },
+                new ScannedItemModel { SkuId = SKU_TWO, ScannedPrice = 0, ScannedQuantity = 1 }
+            };
+        }
 
         protected IOrder CreateOrder_MockSkuApi_Specials()
         {
@@ -97,34 +138,58 @@ namespace ZenCashier.Tests
 
         #endregion
 
-        #region Scan simple price Sku-only
-
-        [Fact]
-        public void ScanItem_ValidEachSku_SubtotalEqualsPrice()
-        {
-            var testClass = CreateOrder_MockSkuApi_PriceOnly();
-
-            testClass.ScanItem(SKU_ONE);
-
-            testClass.SubTotal.ShouldBe(PRICE_ONE);
-            testClass.ScanLog.Count.ShouldBe(1);
-            testClass.ScanLog.Where(scan => scan.SkuId.Equals(SKU_ONE)).Count().ShouldBe(1);
-            
-        }
+        #region ScanItem
 
         [Fact]
         public void ScanItem_InvalidEachSku_SubtotalEqualsZero()
         {
             var testClass = CreateOrder_MockSkuApi_PriceOnly();
 
-            testClass.ScanItem(string.Empty);
+            testClass.ScanItem(string.Empty, false);
 
             testClass.SubTotal.ShouldBe(0);
             testClass.ScanLog.Count.ShouldBe(0);
         }
 
         [Fact]
-        public void ScanItem_ValidEachSkuFourScans_SubtotalEqualsPrice4x()
+        public void ScanItem_InvalidSkuValidWeight_SubtotalEqualsZero()
+        {
+            var testClass = CreateOrder_MockSkuApi_PriceOnly();
+
+            testClass.ScanItem(string.Empty, WEIGHT_TWO, false);
+
+            testClass.SubTotal.ShouldBe(0);
+            testClass.ScanLog.Count.ShouldBe(0);
+        }
+        
+        [Fact]
+        public void ScanItem_ValidSkuNegativeWeight_ShouldThrowException()
+        {
+            var testClass = CreateOrder_MockSkuApi_PriceOnly();
+
+            Should.Throw<InvalidWeightException>(() => testClass.ScanItem(SKU_THREE, WEIGHT_NEGATIVE, false));
+        }
+
+        #endregion
+
+
+        #region Add simple price Sku-only
+
+        [Fact]
+        public void AddItem_ValidEachSku_SubtotalEqualsPrice()
+        {
+            var testClass = CreateOrder_MockSkuApi_PriceOnly();
+
+            testClass.AddItem(SKU_ONE);
+
+            testClass.SubTotal.ShouldBe(PRICE_ONE);
+            testClass.ScanLog.Count.ShouldBe(1);
+            testClass.ScanLog.Where(scan => scan.SkuId.Equals(SKU_ONE)).Count().ShouldBe(1);
+
+        }
+        
+        [Fact]
+        public void AddItem_ValidEachSkuFourScans_SubtotalEqualsPrice4x()
         {
             var testClass = CreateOrder_MockSkuApi_PriceOnly();
 
@@ -132,7 +197,7 @@ namespace ZenCashier.Tests
 
             for (int i = 0; i < timesToExecute; i++)
             {
-                testClass.ScanItem(SKU_ONE);
+                testClass.AddItem(SKU_ONE);
             }
 
             testClass.SubTotal.ShouldBe(PRICE_ONE * timesToExecute);
@@ -141,41 +206,15 @@ namespace ZenCashier.Tests
         }
 
         [Fact]
-        public void ScanItem_TwoValidEachSkusSingleScans_SubtotalEqualsSumOfBothPrices()
+        public void AddItem_TwoValidEachSkusSingleScans_SubtotalEqualsSumOfBothPrices()
         {
             var testClass = CreateOrder_MockSkuApi_PriceOnly();
 
-            testClass.ScanItem(SKU_ONE);
-            testClass.ScanItem(SKU_TWO);
+            testClass.AddItem(SKU_ONE);
+            testClass.AddItem(SKU_TWO);
 
             testClass.SubTotal.ShouldBe(PRICE_ONE + PRICE_TWO);
             testClass.ScanLog.Count.ShouldBe(2);
-        }
-
-        #endregion
-
-        #region Scan simple price With Weight
-        
-        [Fact]
-        public void ScanItem_ValidSkuAndWeight_SubtotalEqualsPriceTimesWeight()
-        {
-            var testClass = CreateOrder_MockSkuApi_PriceOnly();
-
-            testClass.ScanItem(SKU_ONE, WEIGHT_ONE);
-            
-            testClass.SubTotal.ShouldBe(1.78);
-            testClass.ScanLog.Count.ShouldBe(1);
-        }
-
-        [Fact]
-        public void ScanItem_InvalidSkuValidWeight_SubtotalEqualsZero()
-        {
-            var testClass = CreateOrder_MockSkuApi_PriceOnly();
-
-            testClass.ScanItem(string.Empty, WEIGHT_TWO);
-
-            testClass.SubTotal.ShouldBe(0);
-            testClass.ScanLog.Count.ShouldBe(0);
         }
 
         [Fact]
@@ -183,30 +222,37 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateOrder_MockSkuApi_PriceOnly();
 
-            testClass.ScanItem(SKU_TWO, WEIGHT_ZERO);
+            testClass.ScanItem(SKU_TWO, WEIGHT_ZERO, false);
 
             testClass.SubTotal.ShouldBe(0);
             testClass.ScanLog.Count.ShouldBe(0);
         }
+        
+        #endregion
+
+        #region Add simple price With Weight
 
         [Fact]
-        public void ScanItem_ValidSkuNegativeWeight_ShouldThrowException()
+        public void AddItem_ValidSkuAndWeight_SubtotalEqualsPriceTimesWeight()
         {
             var testClass = CreateOrder_MockSkuApi_PriceOnly();
 
-            Should.Throw<InvalidWeightException>(() => testClass.ScanItem(SKU_THREE, WEIGHT_NEGATIVE));
-        }
+            testClass.AddItem(SKU_ONE, WEIGHT_ONE);
 
+            testClass.SubTotal.ShouldBe(1.78);
+            testClass.ScanLog.Count.ShouldBe(1);
+        }
+        
         [Fact]
-        public void ScanItem_TwoValidSkuValidWeight_SubtotalEqualsWeightTimesPriceLogShowsTwoSkus()
+        public void AddItem_TwoValidSkuValidWeight_SubtotalEqualsWeightTimesPriceLogShowsTwoSkus()
         {
             var testClass = CreateOrder_MockSkuApi_PriceOnly();
             var firstExpectedPriceValue = PRICE_TWO * WEIGHT_TWO;
             var secondExpectedPriceValue = PRICE_ONE * WEIGHT_ONE;
             var expectedSubtotal = Math.Round(firstExpectedPriceValue + secondExpectedPriceValue, 2);
 
-            testClass.ScanItem(SKU_TWO, WEIGHT_TWO);
-            testClass.ScanItem(SKU_ONE, WEIGHT_ONE);
+            testClass.AddItem(SKU_TWO, WEIGHT_TWO);
+            testClass.AddItem(SKU_ONE, WEIGHT_ONE);
 
             testClass.SubTotal.ShouldBe(expectedSubtotal);
             testClass.ScanLog.Count.ShouldBe(2);
@@ -219,11 +265,11 @@ namespace ZenCashier.Tests
         #region Markdown Tests
 
         [Fact]
-        public void ScanItem_ValidEachSkuWithMarkdown_SubtotalEqualsTwo()
+        public void AddItem_ValidEachSkuWithMarkdown_SubtotalEqualsTwo()
         {
             var testClass = CreateOrder_MockSkuApi_Markdowns();
 
-            testClass.ScanItem(SKU_TWO);
+            testClass.AddItem(SKU_TWO);
 
             testClass.SubTotal.ShouldBe(PRICE_EACH_MARKDOWN);
             testClass.ScanLog.Count.ShouldBe(1);
@@ -231,11 +277,11 @@ namespace ZenCashier.Tests
         }
 
         [Fact]
-        public void ScanItem_ValidQtySkuWithMarkdown_SubtotalEqualsOneThirtyThree()
+        public void AddItem_ValidQtySkuWithMarkdown_SubtotalEqualsOneThirtyThree()
         {
             var testClass = CreateOrder_MockSkuApi_Markdowns();
 
-            testClass.ScanItem(SKU_TWO, WEIGHT_ONE);
+            testClass.AddItem(SKU_TWO, WEIGHT_ONE);
 
             testClass.SubTotal.ShouldBe(PRICE_QTY_MARKDOWN);
             testClass.ScanLog.Count.ShouldBe(1);
@@ -247,7 +293,7 @@ namespace ZenCashier.Tests
         #region Special Tests -- Buy One Get One
 
         [Fact]
-        public void ScanItem_BuyFourGetOneFree_SubtotalEqualsPrice3x()
+        public void AddItem_BuyFourGetOneFree_SubtotalEqualsPrice3x()
         {
             var testClass = CreateOrder_MockSkuApi_Specials();
 
@@ -255,7 +301,7 @@ namespace ZenCashier.Tests
 
             for (int i = 0; i < timesToExecute; i++)
             {
-                testClass.ScanItem(SKU_THREE);
+                testClass.AddItem(SKU_THREE);
             }
 
             testClass.SubTotal.ShouldBe(PRICE_THREE * 3);
@@ -264,7 +310,7 @@ namespace ZenCashier.Tests
         }
 
         [Fact]
-        public void ScanItem_BuyFourGetOneFreeTwoScanned_SubtotalEqualsPrice3x()
+        public void AddItem_BuyFourGetOneFreeTwoScanned_SubtotalEqualsPrice3x()
         {
             var testClass = CreateOrder_MockSkuApi_Specials();
 
@@ -272,7 +318,7 @@ namespace ZenCashier.Tests
 
             for (int i = 0; i < timesToExecute; i++)
             {
-                testClass.ScanItem(SKU_THREE);
+                testClass.AddItem(SKU_THREE);
             }
 
             testClass.SubTotal.ShouldBe(PRICE_THREE * 2);
@@ -281,16 +327,16 @@ namespace ZenCashier.Tests
         }
 
         [Fact]
-        public void ScanItem_BuyTwoGetOneHalfOff_SubtotalEquals2fullPriceOneHalf()
+        public void AddItem_BuyTwoGetOneHalfOff_SubtotalEquals2fullPriceOneHalf()
         {
             var testClass = CreateOrder_MockSkuApi_Specials();
-            var expectedSubtotal = Math.Round((PRICE_FOUR * 2) + (PRICE_FOUR * .5),2);
+            var expectedSubtotal = Math.Round((PRICE_FOUR * 2) + (PRICE_FOUR * .5), 2);
 
             var timesToExecute = 3;
 
             for (int i = 0; i < timesToExecute; i++)
             {
-                testClass.ScanItem(SKU_FOUR);
+                testClass.AddItem(SKU_FOUR);
             }
 
             testClass.SubTotal.ShouldBe(expectedSubtotal);
@@ -299,7 +345,7 @@ namespace ZenCashier.Tests
         }
 
         [Fact]
-        public void ScanItem_BuyThreeNoSpecial_SubtotalEqualsPrice3x()
+        public void AddItem_BuyThreeNoSpecial_SubtotalEqualsPrice3x()
         {
             var testClass = CreateOrder_MockSkuApi_PriceOnly();
 
@@ -307,7 +353,7 @@ namespace ZenCashier.Tests
 
             for (int i = 0; i < timesToExecute; i++)
             {
-                testClass.ScanItem(SKU_TWO);
+                testClass.AddItem(SKU_TWO);
             }
 
             testClass.SubTotal.ShouldBe(PRICE_TWO * timesToExecute);
@@ -320,7 +366,7 @@ namespace ZenCashier.Tests
         #region Special Tests -- Buy X for Y
 
         [Fact]
-        public void ScanItem_BuyFourForTwoFiftyFourScans_SubTotalEquals250()
+        public void AddItem_BuyFourForTwoFiftyFourScans_SubTotalEquals250()
         {
             var testClass = CreateOrder_MockSkuApi_Specials();
 
@@ -328,7 +374,7 @@ namespace ZenCashier.Tests
 
             for (int i = 0; i < timesToExecute; i++)
             {
-                testClass.ScanItem(SKU_ONE);
+                testClass.AddItem(SKU_ONE);
             }
 
             testClass.SubTotal.ShouldBe(SPECIAL_ONE_PRICE);
@@ -337,7 +383,7 @@ namespace ZenCashier.Tests
         }
 
         [Fact]
-        public void ScanItem_BuyFourForTwoFiftyTwoScans_SubTotalEqualsPrice2x()
+        public void AddItem_BuyFourForTwoFiftyTwoScans_SubTotalEqualsPrice2x()
         {
             var testClass = CreateOrder_MockSkuApi_Specials();
 
@@ -345,7 +391,7 @@ namespace ZenCashier.Tests
 
             for (int i = 0; i < timesToExecute; i++)
             {
-                testClass.ScanItem(SKU_ONE);
+                testClass.AddItem(SKU_ONE);
             }
 
             testClass.SubTotal.ShouldBe(PRICE_ONE * timesToExecute);
@@ -354,7 +400,7 @@ namespace ZenCashier.Tests
         }
 
         [Fact]
-        public void ScanItem_BuyFourForTwoFiftyFiveScans_SubTotalEqualsSpecialPlusPrice()
+        public void AddItem_BuyFourForTwoFiftyFiveScans_SubTotalEqualsSpecialPlusPrice()
         {
             var testClass = CreateOrder_MockSkuApi_Specials();
             var expectedPrice = SPECIAL_ONE_PRICE + PRICE_ONE;
@@ -363,7 +409,7 @@ namespace ZenCashier.Tests
 
             for (int i = 0; i < timesToExecute; i++)
             {
-                testClass.ScanItem(SKU_ONE);
+                testClass.AddItem(SKU_ONE);
             }
 
             testClass.SubTotal.ShouldBe(expectedPrice);
@@ -372,7 +418,7 @@ namespace ZenCashier.Tests
         }
 
         [Fact]
-        public void ScanItem_BuyFourForTwoFiftyTwoSkus_SubTotalEqualsSpecialPlusOtherPrice()
+        public void AddItem_BuyFourForTwoFiftyTwoSkus_SubTotalEqualsSpecialPlusOtherPrice()
         {
             var testClass = CreateOrder_MockSkuApi_Specials();
             var expectedPrice = SPECIAL_ONE_PRICE + PRICE_TWO;
@@ -381,10 +427,10 @@ namespace ZenCashier.Tests
 
             for (int i = 0; i < timesToExecute; i++)
             {
-                testClass.ScanItem(SKU_ONE);
+                testClass.AddItem(SKU_ONE);
             }
 
-            testClass.ScanItem(SKU_TWO);
+            testClass.AddItem(SKU_TWO);
 
             testClass.SubTotal.ShouldBe(expectedPrice);
             testClass.ScanLog.Count.ShouldBe(5);
@@ -397,7 +443,7 @@ namespace ZenCashier.Tests
         #region Limit Specials
 
         [Fact]
-        public void ScanItem_SpecialLimit8Scan8_SubTotalEquals2xSpecialPrice()
+        public void AddItem_SpecialLimit8Scan8_SubTotalEquals2xSpecialPrice()
         {
             var testClass = CreateOrder_MockSkuApi_Specials();
             var expectedPrice = (SPECIAL_ONE_PRICE * 2);
@@ -406,7 +452,7 @@ namespace ZenCashier.Tests
 
             for (int i = 0; i < timesToExecute; i++)
             {
-                testClass.ScanItem(SKU_ONE);
+                testClass.AddItem(SKU_ONE);
             }
 
             testClass.SubTotal.ShouldBe(expectedPrice);
@@ -415,8 +461,8 @@ namespace ZenCashier.Tests
         }
 
         [Fact]
-        public void ScanItem_SpecialLimit8Scan12_SubTotalEquals2xSpecialPricePlus4xRegular()
-        
+        public void AddItem_SpecialLimit8Scan12_SubTotalEquals2xSpecialPricePlus4xRegular()
+
         {
             var testClass = CreateOrder_MockSkuApi_Specials();
             var expectedPrice = (SPECIAL_ONE_PRICE * 2) + (PRICE_ONE * 4);
@@ -425,7 +471,7 @@ namespace ZenCashier.Tests
 
             for (int i = 0; i < timesToExecute; i++)
             {
-                testClass.ScanItem(SKU_ONE);
+                testClass.AddItem(SKU_ONE);
             }
 
             testClass.SubTotal.ShouldBe(expectedPrice);
@@ -434,7 +480,7 @@ namespace ZenCashier.Tests
         }
 
         [Fact]
-        public void ScanItem_BogoSpecialLimit12Scan12_SubTotalEquals9xRegularPrice()
+        public void AddItem_BogoSpecialLimit12Scan12_SubTotalEquals9xRegularPrice()
         {
             var testClass = CreateOrder_MockSkuApi_Specials();
             var expectedPrice = PRICE_THREE * 9;
@@ -443,7 +489,7 @@ namespace ZenCashier.Tests
 
             for (int i = 0; i < timesToExecute; i++)
             {
-                testClass.ScanItem(SKU_THREE);
+                testClass.AddItem(SKU_THREE);
             }
 
             testClass.SubTotal.ShouldBe(expectedPrice);
@@ -452,7 +498,7 @@ namespace ZenCashier.Tests
         }
 
         [Fact]
-        public void ScanItem_BogoSpecialLimit6Scan9_SubTotalEquals9xRegularPrice()
+        public void AddItem_BogoSpecialLimit6Scan9_SubTotalEquals9xRegularPrice()
         {
             var testClass = CreateOrder_MockSkuApi_Specials();
             var expectedPrice = PRICE_TWO * 7;
@@ -461,7 +507,7 @@ namespace ZenCashier.Tests
 
             for (int i = 0; i < timesToExecute; i++)
             {
-                testClass.ScanItem(SKU_TWO);
+                testClass.AddItem(SKU_TWO);
             }
 
             testClass.SubTotal.ShouldBe(expectedPrice);
@@ -470,7 +516,7 @@ namespace ZenCashier.Tests
         }
 
         [Fact]
-        public void ScanItem_BogoSpecialLimit12Scan14_SubTotalEquals12xRegularPrice()
+        public void AddItem_BogoSpecialLimit12Scan14_SubTotalEquals12xRegularPrice()
         {
             var testClass = CreateOrder_MockSkuApi_Specials();
             var expectedPrice = PRICE_THREE * 11;
@@ -479,12 +525,77 @@ namespace ZenCashier.Tests
 
             for (int i = 0; i < timesToExecute; i++)
             {
-                testClass.ScanItem(SKU_THREE);
+                testClass.AddItem(SKU_THREE);
             }
 
             testClass.SubTotal.ShouldBe(expectedPrice);
             testClass.ScanLog.Count.ShouldBe(timesToExecute);
             testClass.ScanLog.Where(scan => scan.SkuId.Equals(SKU_THREE)).Count().ShouldBe(timesToExecute);
+        }
+
+        #endregion
+
+        #region Remove Scan
+
+        [Fact]
+        public void RemoveItem_ValidEachSku_SubtotalEqualsMinusSkuPrice()
+        {
+            var testClass = CreateOrder_MockSkuApi_PriceOnly();
+            testClass.ScanLog = Create_ScannedItems_ThreeSingleSkuThrees();
+            testClass.SubTotal = PRICE_THREE * 3;
+
+            var expectedPrice = PRICE_THREE * 2;
+
+            testClass.RemoveItem(SKU_THREE);
+
+            testClass.ScanLog.Count.ShouldBe(2);
+            testClass.SubTotal.ShouldBe(expectedPrice);
+
+        }
+
+        [Fact]
+        public void RemoveItem_ValidQuantitySku_SubtotalEqualsMinusSalePrice()
+        {
+            var testClass = CreateOrder_MockSkuApi_PriceOnly();
+            testClass.ScanLog = Create_ScannedItems_ThreeWeightedSkuThrees();
+            testClass.SubTotal = (PRICE_THREE * WEIGHT_ONE) + (PRICE_THREE * WEIGHT_TWO) + (PRICE_THREE * WEIGHT_THREE);
+
+            var expectedPrice = (PRICE_THREE * WEIGHT_ONE) + (PRICE_THREE * WEIGHT_TWO);
+
+            testClass.RemoveItem(SKU_THREE, WEIGHT_THREE);
+
+            testClass.ScanLog.Count.ShouldBe(2);
+            testClass.SubTotal.ShouldBe(expectedPrice);
+        }
+
+        [Fact]
+        public void RemoveItem_InvalidatesXforYSpecial_SubtotalEqualsSumOfPrices()
+        {
+            var testClass = CreateOrder_MockSkuApi_Specials();
+            testClass.ScanLog = Create_ScannedItems_ThreeSingleSkuOne_ForGetXforY();
+
+            var expectedPrice = (PRICE_ONE * 2);
+            testClass.SubTotal = SPECIAL_ONE_PRICE;
+
+            testClass.RemoveItem(SKU_ONE);
+
+            testClass.ScanLog.Count.ShouldBe(2);
+            testClass.SubTotal.ShouldBe(expectedPrice);
+        }
+
+        [Fact]
+        public void RemoveItem_InvalidatesBuy2Get1Free_SubtotalDoesNotChange()
+        {
+            var testClass = CreateOrder_MockSkuApi_Specials();
+            testClass.ScanLog = Create_ScannedItems_ThreeSingleSkuTwo_ForBogo();
+
+            var expectedPrice = (PRICE_TWO * 2);
+            testClass.SubTotal = expectedPrice;
+
+            testClass.RemoveItem(SKU_TWO);
+
+            testClass.ScanLog.Count.ShouldBe(2);
+            testClass.SubTotal.ShouldBe(expectedPrice);
         }
 
         #endregion
