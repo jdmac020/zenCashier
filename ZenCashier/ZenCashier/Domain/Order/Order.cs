@@ -81,12 +81,7 @@ namespace ZenCashier.Domain.Order
 
         public void AddItem(string sku, double qty = double.NaN)
         {
-            double scanQty = 1;
-
-            if (double.IsNaN(qty).Equals(false))
-            {
-                scanQty = qty;
-            }
+            var scanQty = SetQuantity(qty);
 
             var price = GetSalePriceForItem(sku, scanQty);
 
@@ -98,7 +93,24 @@ namespace ZenCashier.Domain.Order
 
         public void RemoveItem(string sku, double qty = double.NaN)
         {
-            throw new NotImplementedException();
+            var scannedQty = SetQuantity(qty);
+
+            var loggedItem = GetScannedItems(sku, qty).LastOrDefault();
+
+            var amountToDebit = loggedItem.ScannedPrice * scannedQty;
+
+            _subTotal -= amountToDebit;
+
+            ScanLog.Remove(loggedItem);
+            
+        }
+
+        protected double SetQuantity(double qty)
+        {
+            if (Double.IsNaN(qty))
+                return 1;
+
+            return qty;
         }
 
         protected double GetSalePriceForItem(string sku, double qty)
@@ -152,9 +164,11 @@ namespace ZenCashier.Domain.Order
             return price;
         }
 
-        protected IEnumerable<ScannedItemModel> GetScannedItems(string skuId)
+        protected IEnumerable<ScannedItemModel> GetScannedItems(string skuId, double qty = double.NaN)
         {
-            var scannedItems = ScanLog.Where(item => item.SkuId == skuId);
+            var quantity = SetQuantity(qty);
+
+            var scannedItems = ScanLog.Where(item => item.SkuId == skuId && item.ScannedQuantity.Equals(quantity));
 
             if (scannedItems.Any())
             {

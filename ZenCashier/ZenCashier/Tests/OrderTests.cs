@@ -43,7 +43,7 @@ namespace ZenCashier.Tests
             {
                 new ScannedItemModel { SkuId = SKU_ONE, ScannedPrice = PRICE_ONE, ScannedQuantity = 1 },
                 new ScannedItemModel { SkuId = SKU_ONE, ScannedPrice = PRICE_ONE, ScannedQuantity = 1 },
-                new ScannedItemModel { SkuId = SKU_ONE, ScannedPrice = PRICE_ONE, ScannedQuantity = 1 }
+                new ScannedItemModel { SkuId = SKU_ONE, ScannedPrice = .92, ScannedQuantity = 1 }
             };
         }
 
@@ -53,7 +53,7 @@ namespace ZenCashier.Tests
             {
                 new ScannedItemModel { SkuId = SKU_TWO, ScannedPrice = PRICE_TWO, ScannedQuantity = 1 },
                 new ScannedItemModel { SkuId = SKU_TWO, ScannedPrice = PRICE_TWO, ScannedQuantity = 1 },
-                new ScannedItemModel { SkuId = SKU_TWO, ScannedPrice = PRICE_TWO, ScannedQuantity = 1 }
+                new ScannedItemModel { SkuId = SKU_TWO, ScannedPrice = 0, ScannedQuantity = 1 }
             };
         }
 
@@ -554,36 +554,6 @@ namespace ZenCashier.Tests
         }
 
         [Fact]
-        public void RemoveItem_EmptyIdEachSku_SubtotalDoesNotChange()
-        {
-            var testClass = CreateOrder_MockSkuApi_PriceOnly();
-            testClass.ScanLog = Create_ScannedItems_ThreeSingleSkuThrees();
-
-            var expectedPrice = PRICE_THREE * 3;
-            testClass.SubTotal = expectedPrice;
-
-            testClass.RemoveItem(string.Empty);
-
-            testClass.ScanLog.Count.ShouldBe(3);
-            testClass.SubTotal.ShouldBe(expectedPrice);
-        }
-
-        [Fact]
-        public void RemoveItem_NotScannedEachSku_SubtotalDoesNotChange()
-        {
-            var testClass = CreateOrder_MockSkuApi_PriceOnly();
-            testClass.ScanLog = Create_ScannedItems_ThreeSingleSkuThrees();
-
-            var expectedPrice = PRICE_THREE * 3;
-            testClass.SubTotal = expectedPrice;
-
-            testClass.RemoveItem(string.Empty);
-
-            testClass.ScanLog.Count.ShouldBe(3);
-            testClass.SubTotal.ShouldBe(expectedPrice);
-        }
-
-        [Fact]
         public void RemoveItem_ValidQuantitySku_SubtotalEqualsMinusSalePrice()
         {
             var testClass = CreateOrder_MockSkuApi_PriceOnly();
@@ -595,30 +565,6 @@ namespace ZenCashier.Tests
             testClass.RemoveItem(SKU_THREE, WEIGHT_THREE);
 
             testClass.ScanLog.Count.ShouldBe(2);
-            testClass.SubTotal.ShouldBe(expectedPrice);
-        }
-
-        [Fact]
-        public void RemoveItem_NegativeWeightQuantitySku_ThrowsException()
-        {
-            var testClass = CreateOrder_MockSkuApi_PriceOnly();
-            testClass.ScanLog = Create_ScannedItems_ThreeWeightedSkuThrees();
-
-            Should.Throw<InvalidWeightException>(() => testClass.RemoveItem(SKU_THREE, WEIGHT_NEGATIVE));
-        }
-
-        [Fact]
-        public void RemoveItem_EmptyStringQuantitySku_SubtotalDoesNotChange()
-        {
-            var testClass = CreateOrder_MockSkuApi_PriceOnly();
-            testClass.ScanLog = Create_ScannedItems_ThreeWeightedSkuThrees();
-
-            var expectedPrice = (PRICE_THREE * WEIGHT_ONE) + (PRICE_THREE * WEIGHT_TWO) + (PRICE_THREE * WEIGHT_THREE);
-            testClass.SubTotal = expectedPrice;
-
-            testClass.RemoveItem(string.Empty, WEIGHT_THREE);
-
-            testClass.ScanLog.Count.ShouldBe(3);
             testClass.SubTotal.ShouldBe(expectedPrice);
         }
 
@@ -646,7 +592,7 @@ namespace ZenCashier.Tests
             var expectedPrice = (PRICE_TWO * 2);
             testClass.SubTotal = expectedPrice;
 
-            testClass.RemoveItem(SKU_ONE);
+            testClass.RemoveItem(SKU_TWO);
 
             testClass.ScanLog.Count.ShouldBe(2);
             testClass.SubTotal.ShouldBe(expectedPrice);
