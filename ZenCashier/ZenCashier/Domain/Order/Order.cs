@@ -39,36 +39,71 @@ namespace ZenCashier.Domain.Order
 
         private double _subTotal;
 
-        public void ScanItem(string sku)
+        public void ScanItem(string sku, bool removeItem = false)
         {
 
             if (ValidateScan(sku))
             {
-                UpdateSubTotal(sku);
+
+                if (removeItem)
+                {
+                    RemoveItem(sku);
+                }
+                else
+                {
+                    AddItem(sku);
+                }
+                
             }
 
         }
 
-        public void ScanItem(string sku, double qty)
+        public void ScanItem(string sku, double qty, bool removeItem = false)
         {
 
             if (ValidateScan(sku, qty))
             {
-                UpdateSubTotal(sku, qty);
+
+                // To-Do: Assign qty to 1 at this point? Default to NaN/Default to 1 to eliminate override?
+                // One step at a time...
+
+                if (removeItem)
+                {
+                    RemoveItem(sku, qty);
+                }
+                else
+                {
+                    AddItem(sku, qty);
+                }
             }
 
         }
 
-        protected void UpdateSubTotal(string sku, double qty = double.NaN)
+        public void AddItem(string sku, double qty = double.NaN)
         {
-            var price = GetUnitPrice(sku);
             double scanQty = 1;
 
             if (double.IsNaN(qty).Equals(false))
             {
                 scanQty = qty;
-                price = price * scanQty;
             }
+
+            var price = GetSalePriceForItem(sku, scanQty);
+
+            _subTotal += price;
+
+            LogScannedItem(sku, scanQty, price);
+
+        }
+
+        public void RemoveItem(string sku, double qty = double.NaN)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected double GetSalePriceForItem(string sku, double qty)
+        {
+            var price = GetUnitPrice(sku) * qty;
 
             var skuSpecial = Skus.GetSpecial(sku);
 
@@ -77,10 +112,7 @@ namespace ZenCashier.Domain.Order
                 price = ProcessForEachSpecial(price, sku, skuSpecial);
             }
 
-            _subTotal += price;
-
-            LogScannedItem(sku, scanQty, price);
-
+            return price;
         }
 
         protected double ProcessForEachSpecial(double price, string sku, SpecialInfoModel skuSpecial)
@@ -172,14 +204,6 @@ namespace ZenCashier.Domain.Order
             return isValid;
         }
 
-        public void RemoveItem(string sku)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void RemoveItem(string sku, double qty)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }

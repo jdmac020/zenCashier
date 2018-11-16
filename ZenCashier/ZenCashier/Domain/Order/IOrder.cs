@@ -15,12 +15,12 @@ namespace ZenCashier.Domain.Order
 
         List<ScannedItemModel> ScanLog { get; set; }
 
-        void ScanItem(string sku);
+        void ScanItem(string sku, bool removeItem = false);
 
-        void ScanItem(string sku, double qty);
+        void ScanItem(string sku, double qty, bool removeItem);
 
-        void RemoveItem(string sku);
+        void AddItem(string sku, double qty = Double.NaN);
 
-        void RemoveItem(string sku, double qty);
+        void RemoveItem(string sku, double qty = Double.NaN);
     }
 }
