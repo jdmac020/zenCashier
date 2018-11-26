@@ -128,7 +128,7 @@ namespace ZenCashier.Domain.Order
 
                 if (skuSpecial.NeedsEqualOrGreaterPurchase)
                 {
-                    price = ProcessEqualOrLesserSpecial(price, sku, qty, skuSpecial.Amount);
+                    price = ProcessEqualOrLesserSpecial(price, sku, skuSpecial.Amount);
                 }
                 else
                 {
@@ -140,10 +140,8 @@ namespace ZenCashier.Domain.Order
             return price;
         }
 
-        protected double ProcessEqualOrLesserSpecial(double price, string sku, double qty, double specialAmount)
+        protected double ProcessEqualOrLesserSpecial(double currentValue, string sku, double specialAmount)
         {
-            var currentValue = price * qty;
-
             var otherScans = GetScannedItems(sku).Where(scan => scan.ScannedPrice >= currentValue);
 
             if (otherScans.Any())

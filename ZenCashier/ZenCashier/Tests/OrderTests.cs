@@ -112,6 +112,7 @@ namespace ZenCashier.Tests
                 Amount = SPECIAL_20_PERCENT_OFF,
                 TriggerQuantity = 3,
                 IsPercentOff = false,
+                NeedsEqualOrGreaterPurchase = true,
                 LimitQuantity = 8
             });
 
@@ -121,6 +122,7 @@ namespace ZenCashier.Tests
                 Amount = SPECIAL_BOGO_FREE,
                 TriggerQuantity = 2,
                 IsPercentOff = true,
+                NeedsEqualOrGreaterPurchase = true,
                 LimitQuantity = 6
             });
 
