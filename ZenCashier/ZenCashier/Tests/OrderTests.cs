@@ -672,7 +672,7 @@ namespace ZenCashier.Tests
 
             var firstScanTotal = PRICE_ONE * 2.75;
             var secondScanTotal = PRICE_ONE * 1.75;
-            var expectedPrice = firstScanTotal + secondScanTotal;
+            var expectedPrice = Math.Round(firstScanTotal + secondScanTotal, 2);
 
             testClass.AddItem(SKU_ONE, 2.75);
             testClass.AddItem(SKU_ONE, 1.75);
