@@ -109,7 +109,7 @@ namespace ZenCashier.Tests
             mockSkuApi.GetPrice(SKU_ONE).Returns(PRICE_ONE);
             mockSkuApi.GetSpecial(SKU_ONE).Returns(new Domain.Skus.Models.SpecialInfoModel
             {
-                Amount = SPECIAL_ONE_PRICE,
+                Amount = SPECIAL_20_PERCENT_OFF,
                 TriggerQuantity = 3,
                 IsPercentOff = false,
                 LimitQuantity = 8
@@ -625,6 +625,42 @@ namespace ZenCashier.Tests
 
             testClass.ScanLog.Count.ShouldBe(2);
             testClass.SubTotal.ShouldBe(expectedPrice);
+        }
+
+        #endregion
+
+        #region Special Tests -- Weighted Buy X for Y
+
+        [Fact]
+        public void AddItem_SkuOneWeightedSpecial_SubTotalEqualsFourFifteen()
+        {
+            var testClass = CreateOrder_MockSkuApi_EqualOrLesserSpecials();
+
+            var firstScanTotal = PRICE_ONE * 3.25;
+            var secondScanTotal = PRICE_ONE * 2.5;
+            var discountAmount = secondScanTotal * (SPECIAL_20_PERCENT_OFF / 100);
+            var expectedTotal = (firstScanTotal + secondScanTotal) - discountAmount;
+
+            testClass.AddItem(SKU_ONE, 3.25);
+            testClass.AddItem(SKU_ONE, 2.5);
+
+            testClass.SubTotal.ShouldBe(expectedTotal);
+        }
+
+        [Fact]
+        public void AddItem_SkuTwoWeightedSpecial_SubTotalEqualsRight()
+        {
+            var testClass = CreateOrder_MockSkuApi_EqualOrLesserSpecials();
+
+            var firstScanTotal = PRICE_TWO * 2.75;
+            var secondScanTotal = PRICE_TWO * 2.25;
+            var discountAmount = secondScanTotal;
+            var expectedTotal = (firstScanTotal + secondScanTotal) - discountAmount;
+
+            testClass.AddItem(SKU_TWO, 2.75);
+            testClass.AddItem(SKU_TWO, 2.25);
+
+            testClass.SubTotal.ShouldBe(expectedTotal);
         }
 
         #endregion
