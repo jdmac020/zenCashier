@@ -650,7 +650,7 @@ namespace ZenCashier.Tests
         }
 
         [Fact]
-        public void AddItem_SkuTwoWeightedSpecial_SubTotalEqualsRight()
+        public void AddItem_SkuTwoWeightedSpecial_SubTotalEqualsEightTwentyFive()
         {
             var testClass = CreateOrder_MockSkuApi_EqualOrLesserSpecials();
 
@@ -660,6 +660,37 @@ namespace ZenCashier.Tests
             var expectedTotal = Math.Round((firstScanTotal + secondScanTotal) - discountAmount, 2);
 
             testClass.AddItem(SKU_TWO, 2.75);
+            testClass.AddItem(SKU_TWO, 2.25);
+
+            testClass.SubTotal.ShouldBe(expectedTotal);
+        }
+
+        [Fact]
+        public void AddItem_SkuOneWeightedSpecialBelowTrigger_SubTotalEqualsPriceTimesQuantity()
+        {
+            var testClass = CreateOrder_MockSkuApi_EqualOrLesserSpecials();
+
+            var firstScanTotal = PRICE_ONE * 2.75;
+            var secondScanTotal = PRICE_ONE * 1.75;
+            var expectedPrice = firstScanTotal + secondScanTotal;
+
+            testClass.AddItem(SKU_ONE, 2.75);
+            testClass.AddItem(SKU_ONE, 1.75);
+
+            testClass.SubTotal.ShouldBe(expectedPrice);
+        }
+
+        [Fact]
+        public void AddItem_SkuTwoWeightedSpecialTriggerAmountSecond_FirstScanZeroed()
+        {
+            var testClass = CreateOrder_MockSkuApi_EqualOrLesserSpecials();
+
+            var firstScanTotal = PRICE_TWO * 1.75;
+            var secondScanTotal = PRICE_TWO * 2.25;
+            var discountAmount = firstScanTotal;
+            var expectedTotal = Math.Round((firstScanTotal + secondScanTotal) - discountAmount, 2);
+
+            testClass.AddItem(SKU_TWO, 1.75);
             testClass.AddItem(SKU_TWO, 2.25);
 
             testClass.SubTotal.ShouldBe(expectedTotal);
