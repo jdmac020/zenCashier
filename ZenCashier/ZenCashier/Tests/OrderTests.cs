@@ -639,7 +639,7 @@ namespace ZenCashier.Tests
             var firstScanTotal = PRICE_ONE * 3.25;
             var secondScanTotal = PRICE_ONE * 2.5;
             var discountAmount = secondScanTotal * (SPECIAL_20_PERCENT_OFF / 100);
-            var expectedTotal = (firstScanTotal + secondScanTotal) - discountAmount;
+            var expectedTotal = Math.Round((firstScanTotal + secondScanTotal) - discountAmount, 2);
 
             testClass.AddItem(SKU_ONE, 3.25);
             testClass.AddItem(SKU_ONE, 2.5);
@@ -655,7 +655,7 @@ namespace ZenCashier.Tests
             var firstScanTotal = PRICE_TWO * 2.75;
             var secondScanTotal = PRICE_TWO * 2.25;
             var discountAmount = secondScanTotal;
-            var expectedTotal = (firstScanTotal + secondScanTotal) - discountAmount;
+            var expectedTotal = Math.Round((firstScanTotal + secondScanTotal) - discountAmount, 2);
 
             testClass.AddItem(SKU_TWO, 2.75);
             testClass.AddItem(SKU_TWO, 2.25);

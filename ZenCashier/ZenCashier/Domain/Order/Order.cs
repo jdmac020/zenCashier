@@ -125,10 +125,32 @@ namespace ZenCashier.Domain.Order
 
             if (skuSpecial != null && skuSpecial.Amount != -.01)
             {
-                price = ProcessForEachSpecial(price, sku, skuSpecial);
+
+                if (skuSpecial.NeedsEqualOrGreaterPurchase)
+                {
+                    price = ProcessEqualOrLesserSpecial(price, sku, qty, skuSpecial.Amount);
+                }
+                else
+                {
+                    price = ProcessForEachSpecial(price, sku, skuSpecial);
+                }
+                
             }
 
             return price;
+        }
+
+        protected double ProcessEqualOrLesserSpecial(double price, string sku, double qty, double specialAmount)
+        {
+            var currentValue = price * qty;
+
+            var otherScans = GetScannedItems(sku).Where(scan => scan.ScannedPrice >= currentValue);
+
+            if (otherScans.Any())
+                return currentValue - (currentValue * (specialAmount / 100));
+
+            return currentValue;
+
         }
 
         protected double ProcessForEachSpecial(double price, string sku, SpecialInfoModel skuSpecial)
@@ -166,6 +188,21 @@ namespace ZenCashier.Domain.Order
             }
 
             return price;
+        }
+
+        protected IEnumerable<ScannedItemModel> GetScannedItems(string skuId)
+        {
+
+            var scannedItems = ScanLog.Where(item => item.SkuId == skuId);
+
+            if (scannedItems.Any())
+            {
+                return scannedItems;
+            }
+            else
+            {
+                return Enumerable.Empty<ScannedItemModel>();
+            }
         }
 
         protected IEnumerable<ScannedItemModel> GetScannedItems(string skuId, double qty = double.NaN)

@@ -8,6 +8,7 @@ namespace ZenCashier.Domain.Skus.Models
 {
     public class SpecialInfoModel
     {
+        // amount as percent?
         public double Amount { get; set; }
         public double TriggerQuantity { get; set; }
         public bool IsPercentOff { get; set; }
