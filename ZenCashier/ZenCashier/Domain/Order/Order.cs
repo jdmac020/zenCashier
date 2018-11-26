@@ -145,10 +145,17 @@ namespace ZenCashier.Domain.Order
             if (qty < special.TriggerQuantity)
                 return currentValue;
 
-            var otherScans = GetScannedItems(sku).Where(scan => scan.ScannedPrice >= currentValue);
+            var otherScans = GetScannedItems(sku);
 
-            if (otherScans.Any())
+            if (otherScans.Any(scans => scans.ScannedPrice >= currentValue))
                 return currentValue - (currentValue * (special.Amount / 100));
+
+            if (otherScans.Any(scans => scans.ScannedPrice <= currentValue))
+            {
+                var previousScan = otherScans.Where(scan => scan.ScannedPrice <= currentValue).FirstOrDefault();
+
+                return currentValue - (previousScan.ScannedPrice * (special.Amount / 100));
+            }
 
             return currentValue;
 
