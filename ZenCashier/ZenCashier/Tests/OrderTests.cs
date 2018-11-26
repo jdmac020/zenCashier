@@ -103,6 +103,35 @@ namespace ZenCashier.Tests
             return order;
         }
 
+        protected IOrder CreateOrder_MockSkuApi_EqualOrLesserSpecials()
+        {
+            var mockSkuApi = Substitute.For<ISkuManager>();
+            mockSkuApi.GetPrice(SKU_ONE).Returns(PRICE_ONE);
+            mockSkuApi.GetSpecial(SKU_ONE).Returns(new Domain.Skus.Models.SpecialInfoModel
+            {
+                Amount = SPECIAL_ONE_PRICE,
+                TriggerQuantity = 3,
+                IsPercentOff = false,
+                LimitQuantity = 8
+            });
+
+            mockSkuApi.GetPrice(SKU_TWO).Returns(PRICE_TWO);
+            mockSkuApi.GetSpecial(SKU_TWO).Returns(new Domain.Skus.Models.SpecialInfoModel
+            {
+                Amount = SPECIAL_BOGO_FREE,
+                TriggerQuantity = 2,
+                IsPercentOff = true,
+                LimitQuantity = 6
+            });
+
+            var order = new Order
+            {
+                Skus = mockSkuApi
+            };
+
+            return order;
+        }
+
         protected IOrder CreateOrder_MockSkuApi_Markdowns()
         {
             var mockSkuApi = Substitute.For<ISkuManager>();
@@ -535,7 +564,7 @@ namespace ZenCashier.Tests
 
         #endregion
 
-        #region Remove Scan
+        #region Remove Item
 
         [Fact]
         public void RemoveItem_ValidEachSku_SubtotalEqualsMinusSkuPrice()

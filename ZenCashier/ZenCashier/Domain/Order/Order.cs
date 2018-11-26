@@ -39,6 +39,8 @@ namespace ZenCashier.Domain.Order
 
         private double _subTotal;
 
+        // equal or less amount to check?
+
         public void ScanItem(string sku, bool removeItem = false)
         {
 
