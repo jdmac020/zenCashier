@@ -71,7 +71,7 @@ namespace ZenCashier.Tests
         }
 
         [Fact]
-        public void UseCaseThree_ValidMarkdown_IncreasesSubtotalByCorrectPrice()
+        public void UseCaseThree_ValidMarkdown_SubtotalEqualsPriceTwoMinusMarkdownTwo()
         {
             var testClass = CreateTestClass();
 
@@ -83,41 +83,79 @@ namespace ZenCashier.Tests
         }
 
         [Fact]
-        public void UseCaseThree_ValidMarkdownTwice_IncreasesSubtotalByCorrectPrice()
+        public void UseCaseThree_ValidMarkdownTwice_SubtotalEqualsPriceTwo2xMinusMarkdownTwo2x()
         {
             var testClass = CreateTestClass();
 
-            var expectedPrice = Math.Round((PRICE_TWO - MARKDOWN_TWO) * 2, 2);
+            var scans = 2;
+            var expectedPrice = Math.Round((PRICE_TWO - MARKDOWN_TWO) * scans, 2);
 
-            testClass.ScanItem(SKU_TWO);
-            testClass.ScanItem(SKU_TWO);
+            for (int i = 0; i < scans; i++)
+            {
+                testClass.ScanItem(SKU_TWO);
+            }
 
             testClass.SubTotal.ShouldBe(expectedPrice);
         }
 
         [Fact]
-        public void UseCaseFour_BogoSpecial_IncreasesSubtotalByCorrectPrice()
+        public void UseCaseFour_BogoSpecial_FourScansSubtotalOfThree()
         {
-            var foo = 0;
-            foo.ShouldBe(1);
+            var testClass = CreateTestClass();
+
+            var scans = 4;
+            var expectedPrice = Math.Round(PRICE_THREE * (scans - 1), 2);
+
+            for (int i = 0; i < scans; i++)
+            {
+                testClass.ScanItem(SKU_THREE);
+            }
+
+            testClass.SubTotal.ShouldBe(expectedPrice);
+            testClass.ScanLog.Count.ShouldBe(4);
         }
 
         [Fact]
         public void UseCaseFive_BuyMforNSpecial_IncreasesSubtotalByCorrectPrice()
         {
-            var foo = 0;
-            foo.ShouldBe(1);
+            var testClass = CreateTestClass();
+
+            var scans = 3;
+            var expectedPrice = PRICE_TWO;
+
+            for (int i = 0; i < scans; i++)
+            {
+                testClass.ScanItem(SKU_FOUR);
+            }
+
+            testClass.SubTotal.ShouldBe(expectedPrice);
         }
 
         [Fact]
         public void UseCaseSix_BogoLimitSpecial_IncreasesSubtotalByCorrectPrice()
+        {
+            var testClass = CreateTestClass();
+
+            var scans = 12;
+            var expectedPrice = Math.Round(PRICE_THREE * 10, 2);
+
+            for (int i = 0; i < scans; i++)
+            {
+                testClass.ScanItem(SKU_THREE);
+            }
+
+            testClass.SubTotal.ShouldBe(expectedPrice);
+        }
+
+        [Fact]
+        public void UseCaseSeven_RemoveOneEachItem_DecreasesSubtotalByCorrectPrice()
         {
             var foo = 0;
             foo.ShouldBe(1);
         }
 
         [Fact]
-        public void UseCaseSeven_RemoveOneEachItem_DecreasesSubtotalByCorrectPrice()
+        public void UseCaseSeven_RemoveOneEachItem_InvalidatesSpecial()
         {
             var foo = 0;
             foo.ShouldBe(1);
