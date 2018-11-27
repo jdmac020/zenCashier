@@ -103,6 +103,37 @@ namespace ZenCashier.Tests
             return order;
         }
 
+        protected IOrder CreateOrder_MockSkuApi_EqualOrLesserSpecials()
+        {
+            var mockSkuApi = Substitute.For<ISkuManager>();
+            mockSkuApi.GetPrice(SKU_ONE).Returns(PRICE_ONE);
+            mockSkuApi.GetSpecial(SKU_ONE).Returns(new Domain.Skus.Models.SpecialInfoModel
+            {
+                Amount = SPECIAL_20_PERCENT_OFF,
+                TriggerQuantity = 3,
+                IsPercentOff = true,
+                NeedsEqualOrGreaterPurchase = true,
+                LimitQuantity = 8
+            });
+
+            mockSkuApi.GetPrice(SKU_TWO).Returns(PRICE_TWO);
+            mockSkuApi.GetSpecial(SKU_TWO).Returns(new Domain.Skus.Models.SpecialInfoModel
+            {
+                Amount = SPECIAL_BOGO_FREE,
+                TriggerQuantity = 2,
+                IsPercentOff = true,
+                NeedsEqualOrGreaterPurchase = true,
+                LimitQuantity = 6
+            });
+
+            var order = new Order
+            {
+                Skus = mockSkuApi
+            };
+
+            return order;
+        }
+
         protected IOrder CreateOrder_MockSkuApi_Markdowns()
         {
             var mockSkuApi = Substitute.For<ISkuManager>();
@@ -535,7 +566,7 @@ namespace ZenCashier.Tests
 
         #endregion
 
-        #region Remove Scan
+        #region Remove Item
 
         [Fact]
         public void RemoveItem_ValidEachSku_SubtotalEqualsMinusSkuPrice()
@@ -596,6 +627,73 @@ namespace ZenCashier.Tests
 
             testClass.ScanLog.Count.ShouldBe(2);
             testClass.SubTotal.ShouldBe(expectedPrice);
+        }
+
+        #endregion
+
+        #region Special Tests -- Weighted Buy X for Y
+
+        [Fact]
+        public void AddItem_SkuOneWeightedSpecial_SubTotalEqualsFourFifteen()
+        {
+            var testClass = CreateOrder_MockSkuApi_EqualOrLesserSpecials();
+
+            var firstScanTotal = PRICE_ONE * 3.25;
+            var secondScanTotal = PRICE_ONE * 2.5;
+            var discountAmount = secondScanTotal * (SPECIAL_20_PERCENT_OFF / 100);
+            var expectedTotal = Math.Round((firstScanTotal + secondScanTotal) - discountAmount, 2);
+
+            testClass.AddItem(SKU_ONE, 3.25);
+            testClass.AddItem(SKU_ONE, 2.5);
+
+            testClass.SubTotal.ShouldBe(expectedTotal);
+        }
+
+        [Fact]
+        public void AddItem_SkuTwoWeightedSpecial_SubTotalEqualsEightTwentyFive()
+        {
+            var testClass = CreateOrder_MockSkuApi_EqualOrLesserSpecials();
+
+            var firstScanTotal = PRICE_TWO * 2.75;
+            var secondScanTotal = PRICE_TWO * 2.25;
+            var discountAmount = secondScanTotal;
+            var expectedTotal = Math.Round((firstScanTotal + secondScanTotal) - discountAmount, 2);
+
+            testClass.AddItem(SKU_TWO, 2.75);
+            testClass.AddItem(SKU_TWO, 2.25);
+
+            testClass.SubTotal.ShouldBe(expectedTotal);
+        }
+
+        [Fact]
+        public void AddItem_SkuOneWeightedSpecialBelowTrigger_SubTotalEqualsPriceTimesQuantity()
+        {
+            var testClass = CreateOrder_MockSkuApi_EqualOrLesserSpecials();
+
+            var firstScanTotal = PRICE_ONE * 2.75;
+            var secondScanTotal = PRICE_ONE * 1.75;
+            var expectedPrice = Math.Round(firstScanTotal + secondScanTotal, 2);
+
+            testClass.AddItem(SKU_ONE, 2.75);
+            testClass.AddItem(SKU_ONE, 1.75);
+
+            testClass.SubTotal.ShouldBe(expectedPrice);
+        }
+
+        [Fact]
+        public void AddItem_SkuTwoWeightedSpecialTriggerAmountSecond_FirstScanZeroed()
+        {
+            var testClass = CreateOrder_MockSkuApi_EqualOrLesserSpecials();
+
+            var firstScanTotal = PRICE_TWO * 1.75;
+            var secondScanTotal = PRICE_TWO * 2.25;
+            var discountAmount = firstScanTotal;
+            var expectedTotal = Math.Round((firstScanTotal + secondScanTotal) - discountAmount, 2);
+
+            testClass.AddItem(SKU_TWO, 1.75);
+            testClass.AddItem(SKU_TWO, 2.25);
+
+            testClass.SubTotal.ShouldBe(expectedTotal);
         }
 
         #endregion

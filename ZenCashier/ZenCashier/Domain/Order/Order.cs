@@ -15,10 +15,14 @@ namespace ZenCashier.Domain.Order
         {
             get { return Math.Round(_subTotal, 2); }
 
-            set { if (_subTotal == 0)
+            set
+            {
+                if (_subTotal == 0)
                     _subTotal = value;
             }
         }
+
+        private double _subTotal;
 
         public ISkuManager Skus
         {
@@ -37,8 +41,6 @@ namespace ZenCashier.Domain.Order
 
         private ISkuManager _skus;
 
-        private double _subTotal;
-
         public void ScanItem(string sku, bool removeItem = false)
         {
 
@@ -53,7 +55,7 @@ namespace ZenCashier.Domain.Order
                 {
                     AddItem(sku);
                 }
-                
+
             }
 
         }
@@ -63,9 +65,6 @@ namespace ZenCashier.Domain.Order
 
             if (ValidateScan(sku, qty))
             {
-
-                // To-Do: Assign qty to 1 at this point? Default to NaN/Default to 1 to eliminate override?
-                // One step at a time...
 
                 if (removeItem)
                 {
@@ -123,10 +122,45 @@ namespace ZenCashier.Domain.Order
 
             if (skuSpecial != null && skuSpecial.Amount != -.01)
             {
-                price = ProcessForEachSpecial(price, sku, skuSpecial);
+
+                if (skuSpecial.NeedsEqualOrGreaterPurchase)
+                {
+                    price = ProcessEqualOrLesserSpecial(price, qty, sku, skuSpecial);
+                }
+                else
+                {
+                    price = ProcessForEachSpecial(price, sku, skuSpecial);
+                }
+
             }
 
             return price;
+        }
+
+        protected double ProcessEqualOrLesserSpecial(double currentValue, double qty, string sku, SpecialInfoModel special)
+        {
+            var lastScanned = GetScannedItems(sku).LastOrDefault();
+
+            if (lastScanned is null)
+                return currentValue;
+
+            if (qty < special.TriggerQuantity && lastScanned.ScannedQuantity < special.TriggerQuantity)
+                return currentValue;
+
+            if (special.IsPercentOff)
+            {
+                if (currentValue <= lastScanned.ScannedPrice)
+                {
+                    return currentValue - (currentValue * special.PercentAmount);
+                }
+                else if (currentValue > lastScanned.ScannedPrice)
+                {
+                    return currentValue - (lastScanned.ScannedPrice * special.PercentAmount);
+                }
+            }
+
+            return currentValue - special.Amount;
+
         }
 
         protected double ProcessForEachSpecial(double price, string sku, SpecialInfoModel skuSpecial)
@@ -139,12 +173,10 @@ namespace ZenCashier.Domain.Order
                 if (skuSpecial.IsPercentOff)
                 {
 
-                    if (scannedItemsFullPrice % skuSpecial.TriggerQuantity == 0 && 
+                    if (scannedItemsFullPrice % skuSpecial.TriggerQuantity == 0 &&
                         (scannedItemsFullPrice / skuSpecial.TriggerQuantity) != (scannedItems - scannedItemsFullPrice))
                     {
-                        var discountAsDecimal = skuSpecial.Amount / 100;
-
-                        var discount = price * discountAsDecimal;
+                        var discount = price * skuSpecial.PercentAmount;
 
                         return price - discount;
                     }
@@ -164,6 +196,21 @@ namespace ZenCashier.Domain.Order
             }
 
             return price;
+        }
+
+        protected IEnumerable<ScannedItemModel> GetScannedItems(string skuId)
+        {
+
+            var scannedItems = ScanLog.Where(item => item.SkuId == skuId);
+
+            if (scannedItems.Any())
+            {
+                return scannedItems;
+            }
+            else
+            {
+                return Enumerable.Empty<ScannedItemModel>();
+            }
         }
 
         protected IEnumerable<ScannedItemModel> GetScannedItems(string skuId, double qty = double.NaN)
@@ -220,6 +267,6 @@ namespace ZenCashier.Domain.Order
             return isValid;
         }
 
-        
+
     }
 }
