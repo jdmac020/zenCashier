@@ -148,13 +148,22 @@ namespace ZenCashier.Domain.Order
             var otherScans = GetScannedItems(sku);
 
             if (otherScans.Any(scans => scans.ScannedPrice >= currentValue))
-                return currentValue - (currentValue * (special.Amount / 100));
+            {
+                if (special.IsPercentOff)
+                    return currentValue - (currentValue * special.PercentAmount);
+
+                return currentValue - special.Amount;
+            }
+                
 
             if (otherScans.Any(scans => scans.ScannedPrice <= currentValue))
             {
                 var previousScan = otherScans.Where(scan => scan.ScannedPrice <= currentValue).FirstOrDefault();
 
-                return currentValue - (previousScan.ScannedPrice * (special.Amount / 100));
+                if (special.IsPercentOff)
+                    return currentValue - (previousScan.ScannedPrice * special.PercentAmount);
+
+                return currentValue - special.Amount;
             }
 
             return currentValue;
@@ -174,9 +183,7 @@ namespace ZenCashier.Domain.Order
                     if (scannedItemsFullPrice % skuSpecial.TriggerQuantity == 0 && 
                         (scannedItemsFullPrice / skuSpecial.TriggerQuantity) != (scannedItems - scannedItemsFullPrice))
                     {
-                        var discountAsDecimal = skuSpecial.Amount / 100;
-
-                        var discount = price * discountAsDecimal;
+                        var discount = price * skuSpecial.PercentAmount;
 
                         return price - discount;
                     }

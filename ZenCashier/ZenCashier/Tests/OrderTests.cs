@@ -111,7 +111,7 @@ namespace ZenCashier.Tests
             {
                 Amount = SPECIAL_20_PERCENT_OFF,
                 TriggerQuantity = 3,
-                IsPercentOff = false,
+                IsPercentOff = true,
                 NeedsEqualOrGreaterPurchase = true,
                 LimitQuantity = 8
             });
