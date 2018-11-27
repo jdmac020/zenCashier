@@ -142,7 +142,7 @@ namespace ZenCashier.Domain.Order
 
         protected double ProcessEqualOrLesserSpecial(double currentValue, double qty, string sku, SpecialInfoModel special)
         {
-            if (qty < special.TriggerQuantity)
+            if (qty < special.TriggerQuantity && !GetScannedItems(sku).Any(scans => scans.ScannedQuantity >= special.TriggerQuantity))
                 return currentValue;
 
             var otherScans = GetScannedItems(sku);
