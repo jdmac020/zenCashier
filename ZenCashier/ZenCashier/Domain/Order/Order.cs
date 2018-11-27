@@ -121,7 +121,7 @@ namespace ZenCashier.Domain.Order
             if (skuSpecial != null && skuSpecial.Amount != -.01)
             {
 
-                if (skuSpecial.NeedsEqualOrGreaterPurchase)
+                if (skuSpecial.NeedsEqualOrLesserPurchase)
                 {
                     price = ProcessEqualOrLesserSpecial(price, qty, sku, skuSpecial);
                 }

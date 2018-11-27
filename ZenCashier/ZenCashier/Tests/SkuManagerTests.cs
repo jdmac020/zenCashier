@@ -102,7 +102,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecial(SKU_THREE, 2, SPECIAL_X_FOR_THREE, false);
+            var result = testClass.AddSpecial(SKU_THREE, 2, SPECIAL_X_FOR_THREE, false, false);
 
             result.ShouldBe(true);
         }
@@ -112,7 +112,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecial(SKU_THREE, 4, SPECIAL_BOGO_FREE, true, 10);
+            var result = testClass.AddSpecial(SKU_THREE, 4, SPECIAL_BOGO_FREE, true, true, 10);
 
             result.ShouldBe(true);
         }
@@ -122,7 +122,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecial(string.Empty, 4, SPECIAL_BOGO_HALF, true);
+            var result = testClass.AddSpecial(string.Empty, 4, SPECIAL_BOGO_HALF, false, true);
 
             result.ShouldBe(false);
         }
@@ -132,7 +132,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecial(SKU_THREE, 0, SPECIAL_BOGO_FREE, true, 10);
+            var result = testClass.AddSpecial(SKU_THREE, 0, SPECIAL_BOGO_FREE, true, true, 10);
 
             result.ShouldBe(false);
         }
@@ -142,7 +142,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecial(SKU_TWO, 2, 0, false);
+            var result = testClass.AddSpecial(SKU_TWO, 2, 0, true, false);
 
             result.ShouldBe(false);
         }
@@ -152,7 +152,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecial(SKU_ONE, 2, SPECIAL_X_FOR_NEGATIVE, false);
+            var result = testClass.AddSpecial(SKU_ONE, 2, SPECIAL_X_FOR_NEGATIVE, false, false);
 
             result.ShouldBe(false);
         }
@@ -162,7 +162,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecial(SKU_THREE, 2, SPECIAL_X_FOR_THREE, false, -2);
+            var result = testClass.AddSpecial(SKU_THREE, 2, SPECIAL_X_FOR_THREE, false, false, -2);
 
             result.ShouldBe(false);
         }

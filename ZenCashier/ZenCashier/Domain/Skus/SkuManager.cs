@@ -9,22 +9,55 @@ namespace ZenCashier
 {
     public class SkuManager : ISkuManager
     {
+        protected Dictionary<string, double> _skuList = new Dictionary<string, double>();
+        protected Dictionary<string, double> _markDowns = new Dictionary<string, double>();
+        protected List<SpecialInfoModel> _specials = new List<SpecialInfoModel>();
 
         private const double ERROR_RETURN = -.01;
 
         public bool AddMarkdown(string sku, double amount)
         {
-            return ValidateSkuEntry(sku, amount);
+            if (ValidateSkuEntry(sku, amount))
+            {
+                _markDowns.Add(sku, amount);
+
+                return _markDowns.Any(markdown => markdown.Key.Equals(sku) && markdown.Value.Equals(amount));
+            }
+
+            return false;
         }
 
         public bool AddSku(string id, double price)
         {
-            return ValidateSkuEntry(id, price);
+            if (ValidateSkuEntry(id, price))
+            {
+                _skuList.Add(id, price);
+
+                return _skuList.Any(sku => sku.Key.Equals(id) && sku.Value.Equals(price));
+            }
+
+            return false;
         }
 
-        public bool AddSpecial(string sku, int quantityToTrigger, double amount, bool isPercent, int limit = 0)
+        public bool AddSpecial(string sku, int quantityToTrigger, double amount, bool isPercent, bool equalOrLesserValue, int limit = 0)
         {
-            return ValidateSpecialEntry(sku, quantityToTrigger, amount, limit);
+            if (ValidateSpecialEntry(sku, quantityToTrigger, amount, limit))
+            {
+                _specials.Add(new SpecialInfoModel
+                {
+                    Sku = sku,
+                    TriggerQuantity = quantityToTrigger,
+                    Amount = amount,
+                    IsPercentOff = isPercent,
+                    NeedsEqualOrLesserPurchase = equalOrLesserValue,
+                    LimitQuantity = limit
+                });
+
+                return _specials.Any(special => special.Sku.Equals(sku) && special.Amount.Equals(amount));
+
+            }
+
+            return false;
         }
 
         public double GetMarkdown(string sku)
