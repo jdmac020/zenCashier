@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ZenCashier.Domain.Order.Models;
 using ZenCashier.Domain.Skus.Models;
 using ZenCashier.Exceptions;
