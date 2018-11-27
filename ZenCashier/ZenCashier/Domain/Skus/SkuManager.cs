@@ -9,9 +9,48 @@ namespace ZenCashier
 {
     public class SkuManager : ISkuManager
     {
-        protected Dictionary<string, double> _skuList = new Dictionary<string, double>();
-        protected Dictionary<string, double> _markDowns = new Dictionary<string, double>();
-        protected List<SpecialInfoModel> _specials = new List<SpecialInfoModel>();
+        public Dictionary<string, double> PriceList
+        {
+            get
+            {
+                if (_priceList is null)
+                    _priceList = new Dictionary<string, double>();
+
+                return _priceList;
+            }
+
+            set { _priceList = value; }
+        }
+
+        public Dictionary<string, double> MarkdownList
+        {
+            get
+            {
+                if (_markDowns is null)
+                    _markDowns = new Dictionary<string, double>();
+
+                return _markDowns;
+            }
+
+            set { _markDowns = value; }
+        }
+
+        public List<SpecialInfoModel> SpecialList
+        {
+            get
+            {
+                if (_specials is null)
+                    _specials = new List<SpecialInfoModel>();
+
+                return _specials;
+            }
+
+            set { _specials = value; }
+        }
+
+        protected Dictionary<string, double> _priceList;
+        protected Dictionary<string, double> _markDowns;
+        protected List<SpecialInfoModel> _specials;
 
         private const double ERROR_RETURN = -.01;
 
@@ -19,9 +58,9 @@ namespace ZenCashier
         {
             if (ValidateSkuEntry(sku, amount))
             {
-                _markDowns.Add(sku, amount);
+                MarkdownList.Add(sku, amount);
 
-                return _markDowns.Any(markdown => markdown.Key.Equals(sku) && markdown.Value.Equals(amount));
+                return MarkdownList.Any(markdown => markdown.Key.Equals(sku) && markdown.Value.Equals(amount));
             }
 
             return false;
@@ -31,9 +70,9 @@ namespace ZenCashier
         {
             if (ValidateSkuEntry(id, price))
             {
-                _skuList.Add(id, price);
+                PriceList.Add(id, price);
 
-                return _skuList.Any(sku => sku.Key.Equals(id) && sku.Value.Equals(price));
+                return PriceList.Any(sku => sku.Key.Equals(id) && sku.Value.Equals(price));
             }
 
             return false;
@@ -43,7 +82,7 @@ namespace ZenCashier
         {
             if (ValidateSpecialEntry(sku, quantityToTrigger, amount, limit))
             {
-                _specials.Add(new SpecialInfoModel
+                SpecialList.Add(new SpecialInfoModel
                 {
                     Sku = sku,
                     TriggerQuantity = quantityToTrigger,
@@ -53,7 +92,7 @@ namespace ZenCashier
                     LimitQuantity = limit
                 });
 
-                return _specials.Any(special => special.Sku.Equals(sku) && special.Amount.Equals(amount));
+                return SpecialList.Any(special => special.Sku.Equals(sku) && special.Amount.Equals(amount));
 
             }
 
@@ -67,7 +106,7 @@ namespace ZenCashier
 
             if (ValidateSkuRequest(sku))
             {
-                markdown = .2;
+                markdown = MarkdownList[sku];
             }
 
             return markdown;
@@ -80,7 +119,7 @@ namespace ZenCashier
 
             if (ValidateSkuRequest(sku))
             {
-                price = .79;
+                price = PriceList[sku];
             }
 
             return price;
@@ -92,7 +131,7 @@ namespace ZenCashier
 
             if (ValidateSkuRequest(sku))
             {
-                returnInfo.Amount = 100;
+                returnInfo = SpecialList.Where(special => special.Sku.Equals(sku)).FirstOrDefault();
             }
 
             return returnInfo;
