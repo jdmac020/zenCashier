@@ -78,7 +78,7 @@ namespace ZenCashier
             return false;
         }
 
-        public bool AddSpecial(string sku, int quantityToTrigger, double amount, bool isPercent, bool equalOrLesserValue, int limit = 0)
+        public bool AddSpecial(string sku, double quantityToTrigger, double amount, bool isPercent, bool equalOrLesserValue, int limit = 0)
         {
             if (ValidateSpecialEntry(sku, quantityToTrigger, amount, limit))
             {
@@ -106,7 +106,15 @@ namespace ZenCashier
 
             if (ValidateSkuRequest(sku))
             {
-                markdown = MarkdownList[sku];
+                if (MarkdownList.Any(mn => mn.Key.Equals(sku)))
+                {
+                    markdown = MarkdownList[sku];
+                }
+                else
+                {
+                    markdown = 0;
+                }
+
             }
 
             return markdown;
@@ -119,7 +127,11 @@ namespace ZenCashier
 
             if (ValidateSkuRequest(sku))
             {
-                price = PriceList[sku];
+                if (PriceList.Any(pr => pr.Key.Equals(sku)))
+                {
+                    price = PriceList[sku];
+                }
+
             }
 
             return price;
@@ -153,7 +165,7 @@ namespace ZenCashier
             return true;
         }
 
-        protected bool ValidateSpecialEntry(string sku, int quantityToTrigger, double specialPrice, int limit)
+        protected bool ValidateSpecialEntry(string sku, double quantityToTrigger, double specialPrice, int limit)
         {
             if (string.IsNullOrEmpty(sku))
                 return false;
