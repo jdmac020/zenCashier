@@ -71,17 +71,28 @@ namespace ZenCashier.Tests
         }
 
         [Fact]
-        public void UseCaseTwo_ValidSkuInValidWeight_NoSubTotalIncrease()
+        public void UseCaseThree_ValidMarkdown_IncreasesSubtotalByCorrectPrice()
         {
-            var foo = 0;
-            foo.ShouldBe(1);
+            var testClass = CreateTestClass();
+
+            var expectedPrice = Math.Round(PRICE_TWO - MARKDOWN_TWO, 2);
+
+            testClass.ScanItem(SKU_TWO);
+
+            testClass.SubTotal.ShouldBe(expectedPrice);
         }
 
         [Fact]
-        public void UseCaseThree_ValidMarkdown_IncreasesSubtotalByCorrectPrice()
+        public void UseCaseThree_ValidMarkdownTwice_IncreasesSubtotalByCorrectPrice()
         {
-            var foo = 0;
-            foo.ShouldBe(1);
+            var testClass = CreateTestClass();
+
+            var expectedPrice = Math.Round((PRICE_TWO - MARKDOWN_TWO) * 2, 2);
+
+            testClass.ScanItem(SKU_TWO);
+            testClass.ScanItem(SKU_TWO);
+
+            testClass.SubTotal.ShouldBe(expectedPrice);
         }
 
         [Fact]
