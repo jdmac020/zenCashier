@@ -15,10 +15,14 @@ namespace ZenCashier.Domain.Order
         {
             get { return Math.Round(_subTotal, 2); }
 
-            set { if (_subTotal == 0)
+            set
+            {
+                if (_subTotal == 0)
                     _subTotal = value;
             }
         }
+
+        private double _subTotal;
 
         public ISkuManager Skus
         {
@@ -37,10 +41,6 @@ namespace ZenCashier.Domain.Order
 
         private ISkuManager _skus;
 
-        private double _subTotal;
-
-        // equal or less amount to check?
-
         public void ScanItem(string sku, bool removeItem = false)
         {
 
@@ -55,7 +55,7 @@ namespace ZenCashier.Domain.Order
                 {
                     AddItem(sku);
                 }
-                
+
             }
 
         }
@@ -65,9 +65,6 @@ namespace ZenCashier.Domain.Order
 
             if (ValidateScan(sku, qty))
             {
-
-                // To-Do: Assign qty to 1 at this point? Default to NaN/Default to 1 to eliminate override?
-                // One step at a time...
 
                 if (removeItem)
                 {
@@ -134,7 +131,7 @@ namespace ZenCashier.Domain.Order
                 {
                     price = ProcessForEachSpecial(price, sku, skuSpecial);
                 }
-                
+
             }
 
             return price;
@@ -142,31 +139,27 @@ namespace ZenCashier.Domain.Order
 
         protected double ProcessEqualOrLesserSpecial(double currentValue, double qty, string sku, SpecialInfoModel special)
         {
-            if (qty < special.TriggerQuantity && !GetScannedItems(sku).Any(scans => scans.ScannedQuantity >= special.TriggerQuantity))
+            var lastScanned = GetScannedItems(sku).LastOrDefault();
+
+            if (lastScanned is null)
                 return currentValue;
 
-            var otherScans = GetScannedItems(sku);
+            if (qty < special.TriggerQuantity && lastScanned.ScannedQuantity < special.TriggerQuantity)
+                return currentValue;
 
-            if (otherScans.Any(scans => scans.ScannedPrice >= currentValue))
+            if (special.IsPercentOff)
             {
-                if (special.IsPercentOff)
+                if (currentValue <= lastScanned.ScannedPrice)
+                {
                     return currentValue - (currentValue * special.PercentAmount);
-
-                return currentValue - special.Amount;
-            }
-                
-
-            if (otherScans.Any(scans => scans.ScannedPrice <= currentValue))
-            {
-                var previousScan = otherScans.Where(scan => scan.ScannedPrice <= currentValue).FirstOrDefault();
-
-                if (special.IsPercentOff)
-                    return currentValue - (previousScan.ScannedPrice * special.PercentAmount);
-
-                return currentValue - special.Amount;
+                }
+                else if (currentValue > lastScanned.ScannedPrice)
+                {
+                    return currentValue - (lastScanned.ScannedPrice * special.PercentAmount);
+                }
             }
 
-            return currentValue;
+            return currentValue - special.Amount;
 
         }
 
@@ -180,7 +173,7 @@ namespace ZenCashier.Domain.Order
                 if (skuSpecial.IsPercentOff)
                 {
 
-                    if (scannedItemsFullPrice % skuSpecial.TriggerQuantity == 0 && 
+                    if (scannedItemsFullPrice % skuSpecial.TriggerQuantity == 0 &&
                         (scannedItemsFullPrice / skuSpecial.TriggerQuantity) != (scannedItems - scannedItemsFullPrice))
                     {
                         var discount = price * skuSpecial.PercentAmount;
@@ -274,6 +267,6 @@ namespace ZenCashier.Domain.Order
             return isValid;
         }
 
-        
+
     }
 }
