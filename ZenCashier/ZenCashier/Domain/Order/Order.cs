@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ZenCashier.Domain.Order.Models;
 using ZenCashier.Domain.Skus.Models;
 using ZenCashier.Exceptions;
@@ -98,8 +96,8 @@ namespace ZenCashier.Domain.Order
 
             if (loggedItem != null)
             {
-                var amountToDebit = loggedItem.ScannedPrice * scannedQty;
-
+                var amountToDebit = loggedItem.ScannedPrice;
+                
                 _subTotal -= amountToDebit;
 
                 ScanLog.Remove(loggedItem);
@@ -123,7 +121,7 @@ namespace ZenCashier.Domain.Order
             if (skuSpecial != null && skuSpecial.Amount != -.01)
             {
 
-                if (skuSpecial.NeedsEqualOrGreaterPurchase)
+                if (skuSpecial.NeedsEqualOrLesserPurchase)
                 {
                     price = ProcessEqualOrLesserSpecial(price, qty, sku, skuSpecial);
                 }

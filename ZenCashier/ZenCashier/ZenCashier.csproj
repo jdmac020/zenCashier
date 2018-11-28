@@ -78,6 +78,7 @@
     <Compile Include="Domain\Skus\ISkuManager.cs" />
     <Compile Include="Exceptions\InvalidWeightException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tests\IntegrationTests.cs" />
     <Compile Include="Tests\OrderTests.cs" />
     <Compile Include="Tests\SkuManagerTests.cs" />
     <Compile Include="Tests\TestValues.cs" />

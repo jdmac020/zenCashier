@@ -17,7 +17,7 @@ namespace ZenCashier.Domain.Order
 
         void ScanItem(string sku, bool removeItem = false);
 
-        void ScanItem(string sku, double qty, bool removeItem);
+        void ScanItem(string sku, double qty, bool removeItem = false);
 
         void AddItem(string sku, double qty = Double.NaN);
 

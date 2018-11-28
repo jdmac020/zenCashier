@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Xunit;
 using Shouldly;
 using static ZenCashier.Tests.TestValues;
+using ZenCashier.Domain.Skus.Models;
 
 namespace ZenCashier.Tests
 {
@@ -15,6 +16,30 @@ namespace ZenCashier.Tests
         protected ISkuManager CreateSkuManager()
         {
             return new SkuManager();
+        }
+
+        protected ISkuManager CreateSkuManager_PriceSeeded()
+        {
+            return new SkuManager
+            {
+                PriceList = new Dictionary<string, double> { { SKU_ONE, PRICE_ONE} }
+            };
+        }
+
+        protected ISkuManager CreateSkuManager_MarkdownSeeded()
+        {
+            return new SkuManager
+            {
+                MarkdownList = new Dictionary<string, double> { { SKU_ONE, MARKDOWN_ONE } }
+            };
+        }
+
+        protected ISkuManager CreateSkuManager_SpecialSeeded()
+        {
+            return new SkuManager
+            {
+                SpecialList = new List<SpecialInfoModel> { new SpecialInfoModel { Sku = SKU_THREE, Amount = 100} }
+            };
         }
 
         #region AddSku
@@ -102,7 +127,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecial(SKU_THREE, 2, SPECIAL_X_FOR_THREE, false);
+            var result = testClass.AddSpecial(SKU_THREE, 2, SPECIAL_X_FOR_THREE, false, false);
 
             result.ShouldBe(true);
         }
@@ -112,7 +137,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecial(SKU_THREE, 4, SPECIAL_BOGO_FREE, true, 10);
+            var result = testClass.AddSpecial(SKU_THREE, 4, SPECIAL_BOGO_FREE, true, true, 10);
 
             result.ShouldBe(true);
         }
@@ -122,7 +147,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecial(string.Empty, 4, SPECIAL_BOGO_HALF, true);
+            var result = testClass.AddSpecial(string.Empty, 4, SPECIAL_BOGO_HALF, false, true);
 
             result.ShouldBe(false);
         }
@@ -132,7 +157,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecial(SKU_THREE, 0, SPECIAL_BOGO_FREE, true, 10);
+            var result = testClass.AddSpecial(SKU_THREE, 0, SPECIAL_BOGO_FREE, true, true, 10);
 
             result.ShouldBe(false);
         }
@@ -142,7 +167,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecial(SKU_TWO, 2, 0, false);
+            var result = testClass.AddSpecial(SKU_TWO, 2, 0, true, false);
 
             result.ShouldBe(false);
         }
@@ -152,7 +177,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecial(SKU_ONE, 2, SPECIAL_X_FOR_NEGATIVE, false);
+            var result = testClass.AddSpecial(SKU_ONE, 2, SPECIAL_X_FOR_NEGATIVE, false, false);
 
             result.ShouldBe(false);
         }
@@ -162,7 +187,7 @@ namespace ZenCashier.Tests
         {
             var testClass = CreateSkuManager();
 
-            var result = testClass.AddSpecial(SKU_THREE, 2, SPECIAL_X_FOR_THREE, false, -2);
+            var result = testClass.AddSpecial(SKU_THREE, 2, SPECIAL_X_FOR_THREE, false, false, -2);
 
             result.ShouldBe(false);
         }
@@ -174,7 +199,7 @@ namespace ZenCashier.Tests
         [Fact]
         public void GetPrice_ValidSkuId_ReturnsPriceOne()
         {
-            var testClass = CreateSkuManager();
+            var testClass = CreateSkuManager_PriceSeeded();
 
             var result = testClass.GetPrice(SKU_ONE);
 
@@ -184,7 +209,7 @@ namespace ZenCashier.Tests
         [Fact]
         public void GetPrice_InvalidSku_ReturnsNegativePenny()
         {
-            var testClass = CreateSkuManager();
+            var testClass = CreateSkuManager_PriceSeeded();
 
             var result = testClass.GetPrice(string.Empty);
 
@@ -198,7 +223,7 @@ namespace ZenCashier.Tests
         [Fact]
         public void GetMarkdown_ValidSkuId_ReturnsPriceOne()
         {
-            var testClass = CreateSkuManager();
+            var testClass = CreateSkuManager_MarkdownSeeded();
 
             var result = testClass.GetMarkdown(SKU_ONE);
 
@@ -208,7 +233,7 @@ namespace ZenCashier.Tests
         [Fact]
         public void GetMarkdown_InvalidSku_ReturnsNegativePenny()
         {
-            var testClass = CreateSkuManager();
+            var testClass = CreateSkuManager_MarkdownSeeded();
 
             var result = testClass.GetMarkdown(string.Empty);
 
@@ -222,7 +247,7 @@ namespace ZenCashier.Tests
         [Fact]
         public void GetSpecial_ValidSkuId_ReturnsPriceOne()
         {
-            var testClass = CreateSkuManager();
+            var testClass = CreateSkuManager_SpecialSeeded();
 
             var result = testClass.GetSpecial(SKU_THREE);
 
@@ -232,7 +257,7 @@ namespace ZenCashier.Tests
         [Fact]
         public void GetSpecial_InvalidSku_ReturnsEmptySpecial()
         {
-            var testClass = CreateSkuManager();
+            var testClass = CreateSkuManager_SpecialSeeded();
 
             var result = testClass.GetSpecial(string.Empty);
 

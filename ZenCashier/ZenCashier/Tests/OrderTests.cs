@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 using Shouldly;
 using ZenCashier.Domain.Order;
@@ -31,9 +29,9 @@ namespace ZenCashier.Tests
         {
             return new List<ScannedItemModel>
             {
-                new ScannedItemModel { SkuId = SKU_THREE, ScannedPrice = PRICE_THREE, ScannedQuantity = 2.25 },
-                new ScannedItemModel { SkuId = SKU_THREE, ScannedPrice = PRICE_THREE, ScannedQuantity = 2.09 },
-                new ScannedItemModel { SkuId = SKU_THREE, ScannedPrice = PRICE_THREE, ScannedQuantity = 1.98 }
+                new ScannedItemModel { SkuId = SKU_THREE, ScannedPrice = Math.Round(PRICE_THREE * WEIGHT_ONE, 2), ScannedQuantity = WEIGHT_ONE },
+                new ScannedItemModel { SkuId = SKU_THREE, ScannedPrice = Math.Round(PRICE_THREE * WEIGHT_TWO, 2), ScannedQuantity = WEIGHT_TWO },
+                new ScannedItemModel { SkuId = SKU_THREE, ScannedPrice = Math.Round(PRICE_THREE * WEIGHT_THREE, 2), ScannedQuantity = WEIGHT_THREE }
             };
         }
 
@@ -112,7 +110,7 @@ namespace ZenCashier.Tests
                 Amount = SPECIAL_20_PERCENT_OFF,
                 TriggerQuantity = 3,
                 IsPercentOff = true,
-                NeedsEqualOrGreaterPurchase = true,
+                NeedsEqualOrLesserPurchase = true,
                 LimitQuantity = 8
             });
 
@@ -122,7 +120,7 @@ namespace ZenCashier.Tests
                 Amount = SPECIAL_BOGO_FREE,
                 TriggerQuantity = 2,
                 IsPercentOff = true,
-                NeedsEqualOrGreaterPurchase = true,
+                NeedsEqualOrLesserPurchase = true,
                 LimitQuantity = 6
             });
 
