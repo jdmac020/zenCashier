@@ -198,17 +198,35 @@ namespace ZenCashier.Tests
         }
 
         [Fact]
-        public void UseCaseEight_BogoSpecialWeightedQualifyingScan_IncreasesSubtotalBySpecialPrice()
+        public void UseCaseEight_BogoSpecialWeightedQualifyingScan_SecondScanHalfOff()
         {
-            var foo = 0;
-            foo.ShouldBe(1);
+            var testClass = CreateTestClass();
+
+            var discountAmount = (PRICE_FIVE * WEIGHT_ONE) - ((PRICE_FIVE * WEIGHT_ONE) * .5);
+
+            var expectedPrice = Math.Round((PRICE_FIVE * WEIGHT_ONE) + (PRICE_FIVE * WEIGHT_ONE) - discountAmount, 2);
+
+            testClass.ScanItem(SKU_FIVE, WEIGHT_ONE);
+            testClass.ScanItem(SKU_FIVE, WEIGHT_ONE);
+
+            testClass.SubTotal.ShouldBe(expectedPrice);
+            testClass.ScanLog.Where(scan => scan.SkuId.Equals(SKU_FIVE)).LastOrDefault().ScannedPrice.ShouldBe(discountAmount, 2);
         }
 
         [Fact]
-        public void UseCaseEight_BogoSpecialWeightedNonQualifyingScan_IncreasesSubtotalByFullPrice()
+        public void UseCaseEight_BogoSpecialWeightedReverseScan_FirstScanHalfOff()
         {
-            var foo = 0;
-            foo.ShouldBe(1);
+            var testClass = CreateTestClass();
+
+            var discountAmount = (PRICE_FIVE * WEIGHT_THREE) - ((PRICE_FIVE * WEIGHT_THREE) * .5);
+
+            var expectedPrice = Math.Round((PRICE_FIVE * WEIGHT_THREE) + (PRICE_FIVE * WEIGHT_ONE) - discountAmount, 2);
+
+            testClass.ScanItem(SKU_FIVE, WEIGHT_THREE);
+            testClass.ScanItem(SKU_FIVE, WEIGHT_ONE);
+
+            testClass.SubTotal.ShouldBe(expectedPrice);
+            testClass.ScanLog.Where(scan => scan.SkuId.Equals(SKU_FIVE)).FirstOrDefault().ScannedPrice.ShouldBe(discountAmount, 2);
         }
     }
 }
