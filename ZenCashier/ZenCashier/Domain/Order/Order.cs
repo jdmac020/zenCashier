@@ -96,8 +96,8 @@ namespace ZenCashier.Domain.Order
 
             if (loggedItem != null)
             {
-                var amountToDebit = loggedItem.ScannedPrice * scannedQty;
-
+                var amountToDebit = loggedItem.ScannedPrice;
+                
                 _subTotal -= amountToDebit;
 
                 ScanLog.Remove(loggedItem);

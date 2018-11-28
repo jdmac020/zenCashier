@@ -29,9 +29,9 @@ namespace ZenCashier.Tests
         {
             return new List<ScannedItemModel>
             {
-                new ScannedItemModel { SkuId = SKU_THREE, ScannedPrice = PRICE_THREE, ScannedQuantity = 2.25 },
-                new ScannedItemModel { SkuId = SKU_THREE, ScannedPrice = PRICE_THREE, ScannedQuantity = 2.09 },
-                new ScannedItemModel { SkuId = SKU_THREE, ScannedPrice = PRICE_THREE, ScannedQuantity = 1.98 }
+                new ScannedItemModel { SkuId = SKU_THREE, ScannedPrice = Math.Round(PRICE_THREE * WEIGHT_ONE, 2), ScannedQuantity = WEIGHT_ONE },
+                new ScannedItemModel { SkuId = SKU_THREE, ScannedPrice = Math.Round(PRICE_THREE * WEIGHT_TWO, 2), ScannedQuantity = WEIGHT_TWO },
+                new ScannedItemModel { SkuId = SKU_THREE, ScannedPrice = Math.Round(PRICE_THREE * WEIGHT_THREE, 2), ScannedQuantity = WEIGHT_THREE }
             };
         }
 

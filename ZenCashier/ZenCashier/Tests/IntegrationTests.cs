@@ -116,7 +116,7 @@ namespace ZenCashier.Tests
         }
 
         [Fact]
-        public void UseCaseFive_BuyMforNSpecial_IncreasesSubtotalByCorrectPrice()
+        public void UseCaseFive_BuyMforNSpecial_SubtotalEqualsPriceTwo()
         {
             var testClass = CreateTestClass();
 
@@ -132,7 +132,7 @@ namespace ZenCashier.Tests
         }
 
         [Fact]
-        public void UseCaseSix_BogoLimitSpecial_IncreasesSubtotalByCorrectPrice()
+        public void UseCaseSix_BogoLimitSpecial_SubtotalEqualsPriceThree10x()
         {
             var testClass = CreateTestClass();
 
@@ -148,24 +148,53 @@ namespace ZenCashier.Tests
         }
 
         [Fact]
-        public void UseCaseSeven_RemoveOneEachItem_DecreasesSubtotalByCorrectPrice()
+        public void UseCaseSeven_FourScansRemoveOne_SubtotalEqualsPriceOne3x()
         {
-            var foo = 0;
-            foo.ShouldBe(1);
+            var testClass = CreateTestClass();
+
+            var scans = 4;
+            var expectedPrice = Math.Round(PRICE_ONE * (scans - 1), 2);
+
+            for (int i = 0; i < scans; i++)
+            {
+                testClass.ScanItem(SKU_ONE);
+            }
+
+            testClass.ScanItem(SKU_ONE, true);
+
+            testClass.SubTotal.ShouldBe(expectedPrice);
         }
 
         [Fact]
         public void UseCaseSeven_RemoveOneEachItem_InvalidatesSpecial()
         {
-            var foo = 0;
-            foo.ShouldBe(1);
+            var testClass = CreateTestClass();
+
+            var scans = 3;
+            var expectedPrice = PRICE_FOUR * 2;
+
+            for (int i = 0; i < scans; i++)
+            {
+                testClass.ScanItem(SKU_FOUR);
+            }
+
+            testClass.ScanItem(SKU_FOUR, true);
+
+            testClass.SubTotal.ShouldBe(expectedPrice);
         }
 
         [Fact]
-        public void UseCaseSeven_RemoveWeightedItem_DecreasesSubtotalByCorrectPrice()
+        public void UseCaseSeven_RemoveWeightedItem_SubtotalEqualsPriceOneTimesWeightOne()
         {
-            var foo = 0;
-            foo.ShouldBe(1);
+            var testClass = CreateTestClass();
+
+            var expectedPrice = Math.Round(PRICE_ONE * WEIGHT_ONE, 2);
+
+            testClass.ScanItem(SKU_TWO, WEIGHT_THREE);
+            testClass.ScanItem(SKU_ONE, WEIGHT_ONE);
+            testClass.ScanItem(SKU_TWO, WEIGHT_THREE, true);
+
+            testClass.SubTotal.ShouldBe(expectedPrice);
         }
 
         [Fact]
