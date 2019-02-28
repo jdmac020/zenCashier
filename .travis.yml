@@ -6,4 +6,4 @@ install:
   - nuget restore ./ZenCashier/ZenCashier.sln
 script:
   - msbuild /p:Configuration=Release ./ZenCashier/ZenCashier.sln
-  - mono ./packages/xunit.runners.*/tools/xunit.console.clr4.exe ./ZenCashier/bin/Release/ZenCashier.dll
+  - mono ./testrunner/xunit.runners.2.4.1/tools/xunit.console.clr4.exe ./ZenCashier/bin/Release/ZenCashier.dll
