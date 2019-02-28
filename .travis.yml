@@ -4,6 +4,7 @@ mono:
 solution: ./ZenCashier/ZenCashier.sln
 install:
   - nuget restore ./ZenCashier/ZenCashier.sln
+  - nuget install xunit.runner.console -Version 2.4.1 -OutputDirectory ./testrunner
 script:
   - msbuild /p:Configuration=Release ./ZenCashier/ZenCashier.sln
   - mono ./testrunner/xunit.runner.2.4.1/tools/net461/xunit.console.exe ./ZenCashier/bin/Release/ZenCashier.dll
