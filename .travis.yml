@@ -7,4 +7,5 @@ install:
   - nuget install xunit.runner.console -Version 2.4.1 -OutputDirectory ./testrunner
 script:
   - msbuild /p:Configuration=Release ./ZenCashier/ZenCashier.sln
-  - mono ./testrunner/xunit.runner.2.4.1/tools/net461/xunit.console.exe ./ZenCashier/bin/Release/ZenCashier.dll
+  - mono /home/travis/build/jdmac020/zenCashier/ZenCashier/packages/xunit.runner.console.2.4.1/tools/net461/xunit.console.exe /home/travis/build/jdmac020/zenCashier/ZenCashier/bin/Release/ZenCashier.dll
+  # - mono ./testrunner/xunit.runner.2.4.1/tools/net461/xunit.console.exe ./ZenCashier/bin/Release/ZenCashier.dll
