@@ -5,5 +5,5 @@ solution: ./ZenCashier/ZenCashier.sln
 install:
   - nuget restore ./ZenCashier/ZenCashier.sln
 script:
-  - msbuild /p:Configuration=Release ZenCashier.sln
+  - msbuild /p:Configuration=Release ./ZenCashier/ZenCashier.sln
   - mono ./packages/xunit.runners.*/tools/xunit.console.clr4.exe ./ZenCashier/bin/Release/ZenCashier.dll
