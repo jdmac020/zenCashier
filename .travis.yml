@@ -2,8 +2,6 @@ language: csharp
 mono:
   - latest
 solution: ZenCashier.sln
-install:
-  - nuget install xunit.runners -Version 2.4.1 -OutputDirectory testrunner
 script:
   - msbuild /p:Configuration=Release ZenCashier.sln
-  - mono ./testrunner/xunit.runners.2.4.1/tools/xunit.console.clr4.exe ./ZenCashier/bin/Release/ZenCashier.dll
+  - mono ./packages/xunit.runners.*/tools/xunit.console.clr4.exe ./ZenCashier/bin/Release/ZenCashier.dll
