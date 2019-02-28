@@ -2,6 +2,8 @@ language: csharp
 mono:
   - latest
 solution: ZenCashier.sln
+install:
+  - nuget restore ZenCashier.sln
 script:
   - msbuild /p:Configuration=Release ZenCashier.sln
   - mono ./packages/xunit.runners.*/tools/xunit.console.clr4.exe ./ZenCashier/bin/Release/ZenCashier.dll
