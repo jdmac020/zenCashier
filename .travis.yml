@@ -2,7 +2,7 @@ language: csharp
 branches:
   only:
     - master
-    - /v\d+\.\d+[a-z]/
+    - /^v.*$/
 mono:
   - latest
 solution: ./ZenCashier/ZenCashier.sln
