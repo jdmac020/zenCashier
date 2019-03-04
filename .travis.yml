@@ -15,5 +15,3 @@ deploy:
   skip_cleanup: true
   on:
     tags: true
-
-  # - mono ./testrunner/xunit.runner.2.4.1/tools/net461/xunit.console.exe ./ZenCashier/bin/Release/ZenCashier.dll
