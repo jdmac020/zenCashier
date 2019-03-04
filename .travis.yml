@@ -2,7 +2,7 @@ language: csharp
 branches:
   only:
     - master
-    - /^v.*$/
+    - release*
 mono:
   - latest
 solution: ./ZenCashier/ZenCashier.sln
