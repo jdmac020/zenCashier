@@ -1,4 +1,8 @@
 language: csharp
+branches:
+  only:
+    - master
+    - /v\d+\.\d+[a-z]/
 mono:
   - latest
 solution: ./ZenCashier/ZenCashier.sln
