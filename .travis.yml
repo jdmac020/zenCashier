@@ -8,4 +8,12 @@ install:
 script:
   - msbuild /p:Configuration=Release ./ZenCashier/ZenCashier.sln
   - mono /home/travis/build/jdmac020/zenCashier/ZenCashier/packages/xunit.runner.console.2.4.1/tools/net461/xunit.console.exe /home/travis/build/jdmac020/zenCashier/ZenCashier/ZenCashier/bin/Release/ZenCashier.dll                                                                                                                              
+deploy:
+  provider: releases
+  api_key: 0aa3e603053ddc94b4b87ffeb3897c8531e50dd0
+  file: ./ZenCashier/bin/Release/ZenCashier.dll
+  skip_cleanup: true
+  on:
+    tags: true
+
   # - mono ./testrunner/xunit.runner.2.4.1/tools/net461/xunit.console.exe ./ZenCashier/bin/Release/ZenCashier.dll
