@@ -1,5 +1,5 @@
 # Build Status
-[![Build Status](https://travis-ci.org/jdmac020/zenCashier.png)](https://travis-ci.org/jdmac020/zenCashier)
+Master Branch: [![Build Status](https://travis-ci.org/jdmac020/zenCashier.png)](https://travis-ci.org/jdmac020/zenCashier)
 
 # zenCashier
 Implementation of a kata provided by Pillar Technology
