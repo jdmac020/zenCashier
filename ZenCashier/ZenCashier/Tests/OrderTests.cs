@@ -212,7 +212,7 @@ namespace ZenCashier.Tests
             testClass.AddItem(SKU_ONE);
 
             testClass.SubTotal.ShouldBe(PRICE_ONE);
-            testClass.ScanLog.Count.ShouldBe(1);
+            testClass.ScanLog.Count.ShouldBe(2);
             testClass.ScanLog.Where(scan => scan.SkuId.Equals(SKU_ONE)).Count().ShouldBe(1);
 
         }
